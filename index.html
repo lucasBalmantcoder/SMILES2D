@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Leitor de SMILES — visualizador de estruturas moleculares</title>
+<meta name="description" content="Converta uma notação SMILES em estrutura 2D e propriedades moleculares, direto no navegador." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="grid-backdrop" aria-hidden="true"></div>
+
+<header class="site-header">
+  <p class="eyebrow">cheminformática · notação SMILES</p>
+  <h1>Leitor de SMILES</h1>
+  <p class="lede">Digite uma notação SMILES e veja a estrutura 2D e as propriedades moleculares, calculadas inteiramente no seu navegador.</p>
+</header>
+
+<main class="workbench">
+
+  <section class="card entry-card" aria-labelledby="entry-title">
+    <h2 id="entry-title" class="card-label">01 — entrada</h2>
+
+    <label for="smiles-input" class="field-label">SMILES</label>
+    <div class="input-row">
+      <input
+        id="smiles-input"
+        type="text"
+        class="smiles-input"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="ex.: CN1C=NC2=C1C(=O)N(C(=O)N2C)C"
+      />
+      <button id="draw-btn" class="btn-primary" type="button">Desenhar</button>
+    </div>
+
+    <p id="status-line" class="status-line" role="status" aria-live="polite"></p>
+
+    <div class="examples">
+      <span class="field-label examples-label">exemplos</span>
+      <div class="chip-row">
+        <button class="chip" data-smiles="CN1C=NC2=C1C(=O)N(C(=O)N2C)C" type="button">Cafeína</button>
+        <button class="chip" data-smiles="CC(=O)OC1=CC=CC=C1C(=O)O" type="button">Aspirina</button>
+        <button class="chip" data-smiles="C1=CC=CC=C1" type="button">Benzeno</button>
+        <button class="chip" data-smiles="C(C1C(C(C(C(O1)O)O)O)O)O" type="button">Glicose</button>
+        <button class="chip" data-smiles="CC(C)CC1=CC=C(C=C1)C(C)C(=O)O" type="button">Ibuprofeno</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card specimen-card" aria-labelledby="specimen-title">
+    <h2 id="specimen-title" class="card-label">02 — estrutura</h2>
+
+    <div id="canvas-wrap" class="canvas-wrap">
+      <p id="canvas-placeholder" class="canvas-placeholder">A estrutura desenhada aparece aqui.</p>
+    </div>
+
+    <div class="formula-row">
+      <span class="formula-tag">fórmula</span>
+      <span id="formula-out" class="formula-out">—</span>
+    </div>
+  </section>
+
+  <section class="card props-card" aria-labelledby="props-title">
+    <h2 id="props-title" class="card-label">03 — propriedades</h2>
+    <dl class="props-list" id="props-list">
+      <div class="prop">
+        <dt>massa molar</dt>
+        <dd id="prop-mw">—</dd>
+      </div>
+      <div class="prop">
+        <dt>anéis</dt>
+        <dd id="prop-rings">—</dd>
+      </div>
+      <div class="prop">
+        <dt>doadores de H</dt>
+        <dd id="prop-hbd">—</dd>
+      </div>
+      <div class="prop">
+        <dt>aceptores de H</dt>
+        <dd id="prop-hba">—</dd>
+      </div>
+      <div class="prop">
+        <dt>área polar (TPSA)</dt>
+        <dd id="prop-tpsa">—</dd>
+      </div>
+      <div class="prop">
+        <dt>ligações rotacionáveis</dt>
+        <dd id="prop-rot">—</dd>
+      </div>
+    </dl>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Renderização e cálculo via <a href="https://www.rdkit.org/" target="_blank" rel="noopener">RDKit.js</a>, executado localmente no navegador — nenhum dado é enviado a um servidor.</p>
+</footer>
+
+<script src="https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
