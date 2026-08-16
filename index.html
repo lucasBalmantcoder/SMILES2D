@@ -9,7 +9,6 @@
             content="Converta uma notação SMILES em estrutura 2D e propriedades moleculares, direto no navegador."
         />
 
-        <link rel="icon" type="image/svg+xml" href="favicon.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
@@ -58,6 +57,23 @@
                     aria-live="polite"
                 ></p>
 
+                <label for="name-input" class="field-label name-field-label"
+                    >ou busque por nome em inglês (via PubChem)</label
+                >
+                <div class="input-row">
+                    <input
+                        id="name-input"
+                        type="text"
+                        class="smiles-input"
+                        autocomplete="off"
+                        spellcheck="false"
+                        placeholder="ex.: caffeine, ibuprofen, glucose, paracetamol"
+                    />
+                    <button id="search-btn" class="btn-secondary" type="button">
+                        Buscar
+                    </button>
+                </div>
+
                 <div class="examples">
                     <span class="field-label examples-label">exemplos</span>
                     <div class="chip-row">
@@ -98,6 +114,11 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="history" id="history-block" hidden>
+                    <span class="field-label">histórico</span>
+                    <div class="chip-row" id="history-row"></div>
+                </div>
             </section>
 
             <section
@@ -115,6 +136,18 @@
                 <div class="formula-row">
                     <span class="formula-tag">fórmula</span>
                     <span id="formula-out" class="formula-out">—</span>
+                </div>
+
+                <div class="action-row">
+                    <button id="share-btn" class="btn-ghost" type="button">
+                        Copiar link
+                    </button>
+                    <button id="svg-btn" class="btn-ghost" type="button">
+                        Baixar SVG
+                    </button>
+                    <button id="png-btn" class="btn-ghost" type="button">
+                        Baixar PNG
+                    </button>
                 </div>
             </section>
 

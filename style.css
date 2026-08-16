@@ -183,7 +183,28 @@ body {
 
 .status-line[data-state="ok"] { color: var(--teal); }
 
+.name-field-label { margin-top: 1.4rem; }
+
+.btn-secondary {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.92rem;
+  padding: 0.7rem 1.3rem;
+  border: 1px solid var(--teal);
+  border-radius: 2px;
+  background: transparent;
+  color: var(--teal);
+  cursor: pointer;
+}
+
+.btn-secondary:hover { background: var(--teal); color: #F4F8F6; }
+.btn-secondary:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.btn-secondary:active { transform: translateY(1px); }
+.btn-secondary:disabled { opacity: 0.5; cursor: default; }
+
 .examples { margin-top: 1.6rem; }
+
+.history { margin-top: 1.4rem; }
 
 .examples-label { margin-bottom: 0.6rem; }
 
@@ -257,6 +278,29 @@ body {
   font-size: 0.68em;
 }
 
+.action-row {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.btn-ghost {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  letter-spacing: 0.02em;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); }
+.btn-ghost:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.btn-ghost:disabled { opacity: 0.5; cursor: default; }
+
 /* ---------- properties card ---------- */
 
 .props-list {
@@ -290,11 +334,12 @@ body {
 /* ---------- footer ---------- */
 
 .site-footer {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 0 1.5rem 3rem;
-  font-size: 0.8rem;
-  color: var(--ink-soft);
+      max-width: 920px;
+        margin: 0 auto;
+          padding: 0 1.5rem 3rem;
+            font-size: 0.8rem;
+              color: var(--ink-soft);
+              }
 }
 
 .site-footer a { color: var(--teal); }
