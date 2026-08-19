@@ -96,6 +96,7 @@
     </div>
 
     <div class="action-row">
+      <button id="copy-smiles-btn" class="btn-ghost" type="button">Copiar SMILES</button>
       <button id="share-btn" class="btn-ghost" type="button">Copiar link</button>
       <button id="svg-btn" class="btn-ghost" type="button">Baixar SVG</button>
       <button id="png-btn" class="btn-ghost" type="button">Baixar PNG</button>
@@ -105,6 +106,14 @@
   <section class="card props-card" aria-labelledby="props-title">
     <h2 id="props-title" class="card-label">03 — propriedades</h2>
     <dl class="props-list" id="props-list">
+      <div class="prop">
+        <dt>nome IUPAC</dt>
+        <dd id="prop-iupac" class="prop-long">—</dd>
+      </div>
+      <div class="prop">
+        <dt>InChIKey</dt>
+        <dd id="prop-inchikey" class="prop-long">—</dd>
+      </div>
       <div class="prop">
         <dt>massa molar</dt>
         <dd id="prop-mw">—</dd>
@@ -130,6 +139,7 @@
         <dd id="prop-rot">—</dd>
       </div>
     </dl>
+    <p class="props-hint">nome IUPAC e InChIKey só aparecem para moléculas encontradas pela busca via PubChem.</p>
   </section>
 
 </main>
