@@ -36,14 +36,6 @@ python -m http.server 8000
 # depois acesse http://localhost:8000
 ```
 
-## Publicar no GitHub Pages
 
-1. Suba estes arquivos para a raiz de um repositório no GitHub.
-2. Em **Settings > Pages**, selecione a branch `main` e a pasta `/root` como origem.
-3. O site fica disponível em `https://<usuario>.github.io/<repositorio>/`.
-
-Não é necessário nenhum passo de build — o GitHub Pages serve os arquivos estáticos diretamente.
-
-## Licença
 
 Distribuído sob a licença MIT — veja o arquivo [LICENSE](LICENSE).
