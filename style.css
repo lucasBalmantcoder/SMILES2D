@@ -10,9 +10,33 @@
   --coral: #D8532B;
   --coral-deep: #B8431F;
 
+  /* Fundo do desenho da estrutura: fica sempre claro, como uma lâmina de
+     laboratório sob luz — o SVG do RDKit não segue o tema. */
+  --canvas-bg: #E8EDEA;
+
   --font-display: "Spectral", Georgia, serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
   --font-body: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --paper: #14181A;
+  --paper-line: #262E2B;
+  --panel: #1B211F;
+  --panel-border: #333F3B;
+  --ink: #E7ECE9;
+  --ink-soft: #9FB0A8;
+  --teal: #6FB8B0;
+  --teal-deep: #8FCFC6;
+  --coral: #E2734B;
+  --coral-deep: #EE8A62;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { transition: none; }
+  body, .card, .smiles-input, .chip, .canvas-wrap, .btn-ghost {
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -59,8 +83,44 @@ body {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--teal);
-  margin: 0 0 0.9rem;
+  margin: 0;
 }
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.9rem;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.theme-toggle:hover { border-color: var(--teal); color: var(--teal); }
+.theme-toggle:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.theme-toggle-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--coral);
+}
+
+[data-theme="dark"] .theme-toggle-dot { background: var(--teal); }
 
 .site-header h1 {
   font-family: var(--font-display);
@@ -231,7 +291,7 @@ body {
 /* ---------- specimen card ---------- */
 
 .canvas-wrap {
-  background: var(--paper);
+  background: var(--canvas-bg);
   border: 1px solid var(--paper-line);
   border-radius: 2px;
   min-height: 260px;

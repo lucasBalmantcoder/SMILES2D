@@ -4,6 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Leitor de SMILES — visualizador de estruturas moleculares</title>
+
+<script>
+  (function () {
+    try {
+      var stored = localStorage.getItem("leitorSmiles.theme");
+      var dark = stored ? stored === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      if (dark) document.documentElement.setAttribute("data-theme", "dark");
+    } catch (e) {}
+  })();
+</script>
 <meta name="description" content="Converta uma notação SMILES em estrutura 2D e propriedades moleculares, direto no navegador." />
 
 <meta property="og:type" content="website" />
@@ -28,7 +38,13 @@
 <div class="grid-backdrop" aria-hidden="true"></div>
 
 <header class="site-header">
-  <p class="eyebrow">cheminformática · notação SMILES</p>
+  <div class="header-top">
+    <p class="eyebrow">cheminformática · notação SMILES</p>
+    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
+      <span class="theme-toggle-dot" aria-hidden="true"></span>
+      <span id="theme-toggle-label">Modo escuro</span>
+    </button>
+  </div>
   <h1>Leitor de SMILES</h1>
   <p class="lede">Digite uma notação SMILES e veja a estrutura 2D e as propriedades moleculares, calculadas inteiramente no seu navegador.</p>
 </header>
@@ -149,6 +165,6 @@
 </footer>
 
 <script src="https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js"></script>
-<script src="script.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>

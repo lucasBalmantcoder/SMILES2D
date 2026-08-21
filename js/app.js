@@ -15,6 +15,7 @@ import { renderMolecule } from "./molecule.js";
 import { loadHistory, addToHistory } from "./history.js";
 import { fetchByName } from "./pubchem.js";
 import { buildShareUrl, copyToClipboard, downloadSvg, downloadPng } from "./export.js";
+import { initThemeToggle } from "./theme.js";
 
 var RDKIT_CDN_BASE = "https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/";
 var DEFAULT_SMILES = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"; // cafeína
@@ -167,6 +168,8 @@ function handleDownloadPng() {
 }
 
 function init() {
+  initThemeToggle(document.getElementById("theme-toggle"), document.getElementById("theme-toggle-label"));
+
   els.drawBtn.disabled = true;
   setExportButtonsEnabled(false);
   setStatus("Carregando RDKit…");
