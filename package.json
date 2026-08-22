@@ -1,0 +1,13 @@
+{
+  "name": "smiles2d",
+  "private": true,
+  "type": "module",
+  "description": "Leitor de SMILES — visualizador estático de estruturas moleculares (sem build step; este package.json existe só para testes e lint)",
+  "scripts": {
+    "test": "node --test",
+    "lint": "eslint js/ test/"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.5"
+  }
+}

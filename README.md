@@ -1,10 +1,13 @@
 # Leitor de SMILES
 
+[![CI](https://github.com/lucasBalmantcoder/SMILES2D/actions/workflows/ci.yml/badge.svg)](https://github.com/lucasBalmantcoder/SMILES2D/actions/workflows/ci.yml)
+
 ![Preview do Leitor de SMILES](screenshot.png)
 
 Visualizador de estruturas moleculares: converte uma notação SMILES em uma estrutura 2D e calcula propriedades básicas (massa molar, fórmula, anéis, TPSA, entre outras). Todo o processamento acontece no navegador, via [RDKit.js](https://www.rdkit.org/) (WebAssembly) — não há backend próprio nem envio de dados a um servidor.
 
 **Funcionalidades**
+
 - Desenho de estrutura 2D e cálculo de propriedades a partir do SMILES.
 - Busca por nome comum (ex.: "ibuprofeno"), resolvida via [API pública do PubChem](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
 - Link compartilhável — a URL reflete a molécula atual (`?smiles=...`).
@@ -40,7 +43,17 @@ python -m http.server 8000
 # depois acesse http://localhost:8000
 ```
 
+## Testes e lint
 
+Os módulos puros (`utils.js`, `molecule.js`) têm testes automatizados, rodados com o test runner nativo do Node (sem framework externo) e verificados a cada push via GitHub Actions.
+
+```
+npm install     # só na primeira vez — instala o ESLint como dependência de desenvolvimento
+npm test        # roda os testes (node --test)
+npm run lint    # roda o ESLint
+```
+
+Essas dependências existem só para testes e lint em ambiente de desenvolvimento — o site publicado continua 100% estático, sem nenhuma etapa de build.
 
 ## Licença
 
