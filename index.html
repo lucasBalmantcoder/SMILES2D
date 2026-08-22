@@ -117,6 +117,15 @@
       <button id="svg-btn" class="btn-ghost" type="button">Baixar SVG</button>
       <button id="png-btn" class="btn-ghost" type="button">Baixar PNG</button>
     </div>
+
+    <div class="viewer3d-block">
+      <div class="viewer3d-header">
+        <span class="field-label">estrutura 3D (via PubChem)</span>
+        <button id="view3d-btn" class="btn-secondary" type="button" disabled>Carregar 3D</button>
+      </div>
+      <p id="viewer3d-status" class="status-line" role="status" aria-live="polite"></p>
+      <div id="viewer3d-container" class="viewer3d-container" hidden></div>
+    </div>
   </section>
 
   <section class="card props-card" aria-labelledby="props-title">
@@ -165,6 +174,7 @@
 </footer>
 
 <script src="https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/RDKit_minimal.js"></script>
+<script src="https://unpkg.com/3dmol/build/3Dmol-min.js"></script>
 <script type="module" src="js/app.js"></script>
 </body>
 </html>

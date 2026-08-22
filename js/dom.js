@@ -24,6 +24,9 @@ export var els = {
   pngBtn: document.getElementById("png-btn"),
   historyBlock: document.getElementById("history-block"),
   historyRow: document.getElementById("history-row"),
+  view3dBtn: document.getElementById("view3d-btn"),
+  viewer3dStatus: document.getElementById("viewer3d-status"),
+  viewer3dContainer: document.getElementById("viewer3d-container"),
 };
 
 export var SKELETON_SVG =
@@ -68,6 +71,7 @@ export function setExportButtonsEnabled(enabled) {
   els.shareBtn.disabled = !enabled;
   els.svgBtn.disabled = !enabled;
   els.pngBtn.disabled = !enabled;
+  els.view3dBtn.disabled = !enabled;
 }
 
 export function showErrorPlaceholder(message) {

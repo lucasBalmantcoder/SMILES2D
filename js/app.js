@@ -16,12 +16,22 @@ import { loadHistory, addToHistory } from "./history.js";
 import { fetchByName } from "./pubchem.js";
 import { buildShareUrl, copyToClipboard, downloadSvg, downloadPng } from "./export.js";
 import { initThemeToggle } from "./theme.js";
+import { fetchSdf3dBySmiles, renderViewer } from "./viewer3d.js";
 
 var RDKIT_CDN_BASE = "https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/";
 var DEFAULT_SMILES = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"; // cafeína
 
 var RDKitModule = null;
 var current = null; // { smiles, formulaRaw, svg }
+var viewer3dState = { sdf: null, viewer: null, smiles: null };
+
+function resetViewer3d() {
+  viewer3dState = { sdf: null, viewer: null, smiles: null };
+  els.viewer3dContainer.hidden = true;
+  els.viewer3dContainer.innerHTML = "";
+  els.viewer3dStatus.textContent = "";
+  els.view3dBtn.textContent = "Carregar 3D";
+}
 
 function renderHistory() {
   var list = loadHistory();
@@ -61,6 +71,7 @@ function draw(smiles, options) {
   }
 
   var result = renderMolecule(RDKitModule, smiles);
+  resetViewer3d();
 
   if (!result.ok) {
     current = null;
@@ -167,6 +178,44 @@ function handleDownloadPng() {
   });
 }
 
+function handleView3d() {
+  if (!current) return;
+
+  // Já carregado para esta molécula: só alterna mostrar/ocultar.
+  if (viewer3dState.sdf && viewer3dState.smiles === current.smiles) {
+    var nowHidden = !els.viewer3dContainer.hidden;
+    els.viewer3dContainer.hidden = nowHidden;
+    els.view3dBtn.textContent = nowHidden ? "Mostrar 3D" : "Ocultar 3D";
+    return;
+  }
+
+  els.view3dBtn.disabled = true;
+  els.viewer3dStatus.textContent = "Buscando estrutura 3D no PubChem…";
+  els.viewer3dStatus.removeAttribute("data-state");
+
+  var requestedSmiles = current.smiles;
+
+  fetchSdf3dBySmiles(requestedSmiles)
+    .then(function (sdf) {
+      // Se o usuário desenhou outra molécula enquanto a busca corria, descarta.
+      if (!current || current.smiles !== requestedSmiles) return;
+
+      viewer3dState = { sdf: sdf, smiles: requestedSmiles, viewer: null };
+      els.viewer3dContainer.hidden = false;
+      viewer3dState.viewer = renderViewer(els.viewer3dContainer, sdf);
+      els.viewer3dStatus.textContent = "Estrutura 3D carregada (dados do PubChem).";
+      els.viewer3dStatus.setAttribute("data-state", "ok");
+      els.view3dBtn.textContent = "Ocultar 3D";
+    })
+    .catch(function (err) {
+      els.viewer3dStatus.textContent = "Não foi possível carregar a estrutura 3D (" + err.message + ").";
+      els.viewer3dStatus.removeAttribute("data-state");
+    })
+    .finally(function () {
+      els.view3dBtn.disabled = false;
+    });
+}
+
 function init() {
   initThemeToggle(document.getElementById("theme-toggle"), document.getElementById("theme-toggle-label"));
 
@@ -203,6 +252,7 @@ function init() {
   els.shareBtn.addEventListener("click", handleCopyLink);
   els.svgBtn.addEventListener("click", handleDownloadSvg);
   els.pngBtn.addEventListener("click", handleDownloadPng);
+  els.view3dBtn.addEventListener("click", handleView3d);
 
   if (typeof window.initRDKitModule !== "function") {
     setStatus("Não foi possível carregar o RDKit.js (verifique a conexão).");
