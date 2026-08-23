@@ -30,7 +30,7 @@ function resetViewer3d() {
   els.viewer3dContainer.hidden = true;
   els.viewer3dContainer.innerHTML = "";
   els.viewer3dStatus.textContent = "";
-  els.view3dBtn.textContent = "Carregar 3D";
+  els.view3dBtn.textContent = "3D";
 }
 
 function renderHistory() {
@@ -112,6 +112,7 @@ function draw(smiles, options) {
 
   current = { smiles: result.smiles, formulaRaw: result.formula, svg: result.svg };
   setExportButtonsEnabled(true);
+  load3d(result.smiles);
 
   if (addHistory) {
     addToHistory(result.smiles, result.formula);
@@ -178,6 +179,37 @@ function handleDownloadPng() {
   });
 }
 
+// Busca e renderiza a estrutura 3D no PubChem. Chamada automaticamente a
+// cada molécula desenhada, e também pelo botão (para tentar de novo em
+// caso de falha, já que quando já carregada o botão só alterna visibilidade).
+function load3d(smiles) {
+  els.view3dBtn.disabled = true;
+  els.view3dBtn.textContent = "Carregando 3D…";
+  els.viewer3dStatus.textContent = "Buscando estrutura 3D no PubChem…";
+  els.viewer3dStatus.removeAttribute("data-state");
+
+  fetchSdf3dBySmiles(smiles)
+    .then(function (sdf) {
+      // Se o usuário desenhou outra molécula enquanto a busca corria, descarta.
+      if (!current || current.smiles !== smiles) return;
+
+      viewer3dState = { sdf: sdf, smiles: smiles, viewer: null };
+      els.viewer3dContainer.hidden = false;
+      viewer3dState.viewer = renderViewer(els.viewer3dContainer, sdf);
+      els.viewer3dStatus.textContent = "Estrutura 3D carregada (dados do PubChem).";
+      els.viewer3dStatus.setAttribute("data-state", "ok");
+      els.view3dBtn.textContent = "Ocultar 3D";
+      els.view3dBtn.disabled = false;
+    })
+    .catch(function (err) {
+      if (!current || current.smiles !== smiles) return;
+      els.viewer3dStatus.textContent = "Estrutura 3D indisponível (" + err.message + ").";
+      els.viewer3dStatus.removeAttribute("data-state");
+      els.view3dBtn.textContent = "Tentar novamente";
+      els.view3dBtn.disabled = false;
+    });
+}
+
 function handleView3d() {
   if (!current) return;
 
@@ -189,31 +221,8 @@ function handleView3d() {
     return;
   }
 
-  els.view3dBtn.disabled = true;
-  els.viewer3dStatus.textContent = "Buscando estrutura 3D no PubChem…";
-  els.viewer3dStatus.removeAttribute("data-state");
-
-  var requestedSmiles = current.smiles;
-
-  fetchSdf3dBySmiles(requestedSmiles)
-    .then(function (sdf) {
-      // Se o usuário desenhou outra molécula enquanto a busca corria, descarta.
-      if (!current || current.smiles !== requestedSmiles) return;
-
-      viewer3dState = { sdf: sdf, smiles: requestedSmiles, viewer: null };
-      els.viewer3dContainer.hidden = false;
-      viewer3dState.viewer = renderViewer(els.viewer3dContainer, sdf);
-      els.viewer3dStatus.textContent = "Estrutura 3D carregada (dados do PubChem).";
-      els.viewer3dStatus.setAttribute("data-state", "ok");
-      els.view3dBtn.textContent = "Ocultar 3D";
-    })
-    .catch(function (err) {
-      els.viewer3dStatus.textContent = "Não foi possível carregar a estrutura 3D (" + err.message + ").";
-      els.viewer3dStatus.removeAttribute("data-state");
-    })
-    .finally(function () {
-      els.view3dBtn.disabled = false;
-    });
+  // Ainda não carregado (ou a tentativa anterior falhou) — busca de novo.
+  load3d(current.smiles);
 }
 
 function init() {
