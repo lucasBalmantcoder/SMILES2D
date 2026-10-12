@@ -18,7 +18,7 @@ import { buildShareUrl, copyToClipboard, downloadSvg, downloadPng, downloadMol }
 import { initThemeToggle } from "./theme.js";
 import { fetchSdf3dBySmiles, renderViewer } from "./viewer3d.js";
 
-var RDKIT_CDN_BASE = "https://unpkg.com/@rdkit/rdkit/Code/MinimalLib/dist/";
+var RDKIT_CDN_BASE = "https://unpkg.com/@rdkit/rdkit@2026.9.1/dist/";
 var DEFAULT_SMILES = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"; // cafeína
 
 var RDKitModule = null;

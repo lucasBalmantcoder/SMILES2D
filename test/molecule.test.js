@@ -66,3 +66,22 @@ test("renderMolecule: libera a memória mesmo quando a molécula é inválida", 
   renderMolecule(rdkit, "xyz");
   assert.equal(rdkit.deleted(), true);
 });
+
+test("renderMolecule: calcula fórmula a partir de get_json quando get_molformula está ausente", () => {
+  var fake = {
+    get_mol: () => ({
+      is_valid: () => true,
+      get_svg: () => "<svg></svg>",
+      get_json: () =>
+        JSON.stringify({
+          defaults: { atom: { z: 6 } },
+          molecules: [{ atoms: [{ z: 6, impHs: 3 }, { z: 8, impHs: 1 }] }],
+        }),
+      get_descriptors: () => "{}",
+      delete: () => {},
+    }),
+  };
+  var result = renderMolecule(fake, "CO");
+  assert.equal(result.ok, true);
+  assert.equal(result.formula, "CH4O");
+});
