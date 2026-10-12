@@ -116,6 +116,7 @@
       <button id="share-btn" class="btn-ghost" type="button">Copiar link</button>
       <button id="svg-btn" class="btn-ghost" type="button">Baixar SVG</button>
       <button id="png-btn" class="btn-ghost" type="button">Baixar PNG</button>
+      <button id="mol-btn" class="btn-ghost" type="button">Baixar MOL</button>
     </div>
 
     <div class="viewer3d-block">
@@ -144,8 +145,8 @@
         <dd id="prop-mw">—</dd>
       </div>
       <div class="prop">
-        <dt>anéis</dt>
-        <dd id="prop-rings">—</dd>
+        <dt>LogP (Crippen)</dt>
+        <dd id="prop-logp">—</dd>
       </div>
       <div class="prop">
         <dt>doadores de H</dt>
@@ -156,6 +157,10 @@
         <dd id="prop-hba">—</dd>
       </div>
       <div class="prop">
+        <dt>regra de Lipinski</dt>
+        <dd id="prop-lipinski">—</dd>
+      </div>
+      <div class="prop">
         <dt>área polar (TPSA)</dt>
         <dd id="prop-tpsa">—</dd>
       </div>
@@ -163,8 +168,12 @@
         <dt>ligações rotacionáveis</dt>
         <dd id="prop-rot">—</dd>
       </div>
+      <div class="prop">
+        <dt>anéis</dt>
+        <dd id="prop-rings">—</dd>
+      </div>
     </dl>
-    <p class="props-hint">nome IUPAC e InChIKey só aparecem para moléculas encontradas pela busca via PubChem.</p>
+    <p class="props-hint">A Regra dos 5 de Lipinski avalia o potencial de fármaco oral (Massa ≤ 500, LogP ≤ 5, Doadores ≤ 5, Aceptores ≤ 10). Nome IUPAC e InChIKey vêm da busca via PubChem.</p>
   </section>
 
 </main>

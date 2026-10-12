@@ -9,6 +9,8 @@ export var els = {
   placeholder: document.getElementById("canvas-placeholder"),
   formulaOut: document.getElementById("formula-out"),
   mw: document.getElementById("prop-mw"),
+  logp: document.getElementById("prop-logp"),
+  lipinski: document.getElementById("prop-lipinski"),
   rings: document.getElementById("prop-rings"),
   hbd: document.getElementById("prop-hbd"),
   hba: document.getElementById("prop-hba"),
@@ -22,6 +24,7 @@ export var els = {
   shareBtn: document.getElementById("share-btn"),
   svgBtn: document.getElementById("svg-btn"),
   pngBtn: document.getElementById("png-btn"),
+  molBtn: document.getElementById("mol-btn"),
   historyBlock: document.getElementById("history-block"),
   historyRow: document.getElementById("history-row"),
   view3dBtn: document.getElementById("view3d-btn"),
@@ -51,6 +54,10 @@ export function setStatus(message, state) {
 
 export function resetProps() {
   els.mw.textContent = "—";
+  els.logp.textContent = "—";
+  els.lipinski.textContent = "—";
+  els.lipinski.className = "";
+  els.lipinski.removeAttribute("title");
   els.rings.textContent = "—";
   els.hbd.textContent = "—";
   els.hba.textContent = "—";
@@ -71,6 +78,7 @@ export function setExportButtonsEnabled(enabled) {
   els.shareBtn.disabled = !enabled;
   els.svgBtn.disabled = !enabled;
   els.pngBtn.disabled = !enabled;
+  els.molBtn.disabled = !enabled;
   els.view3dBtn.disabled = !enabled;
 }
 

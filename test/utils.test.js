@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { pick, formatFormula, roundOrDash } from "../js/utils.js";
+import { pick, formatFormula, roundOrDash, calculateLipinski } from "../js/utils.js";
 
 test("pick: retorna o valor da primeira chave presente", () => {
   assert.equal(pick({ b: 2 }, ["a", "b", "c"]), 2);
@@ -44,4 +44,36 @@ test("roundOrDash: retorna travessão para valores inválidos", () => {
   assert.equal(roundOrDash(null), "—");
   assert.equal(roundOrDash(undefined), "—");
   assert.equal(roundOrDash(NaN), "—");
+});
+
+test("calculateLipinski: retorna null para entrada incompleta ou inválida", () => {
+  assert.equal(calculateLipinski(null), null);
+  assert.equal(calculateLipinski({ mw: 200, logp: 1.5, hbd: 1 }), null);
+  assert.equal(calculateLipinski({ mw: 200, logp: NaN, hbd: 1, hba: 2 }), null);
+});
+
+test("calculateLipinski: caso sem violações (ex.: cafeína)", () => {
+  var result = calculateLipinski({ mw: 194.19, logp: -0.07, hbd: 0, hba: 3 });
+  assert.equal(result.violationsCount, 0);
+  assert.equal(result.pass, true);
+  assert.deepEqual(result.violations, []);
+});
+
+test("calculateLipinski: detecta 1 violação (ainda aprovado pela regra clássica)", () => {
+  var result = calculateLipinski({ mw: 550, logp: 2.1, hbd: 1, hba: 4 });
+  assert.equal(result.violationsCount, 1);
+  assert.equal(result.pass, true);
+  assert.deepEqual(result.violations, ["Massa > 500 Da"]);
+});
+
+test("calculateLipinski: detecta múltiplas violações (reprovado)", () => {
+  var result = calculateLipinski({ mw: 600, logp: 6.2, hbd: 7, hba: 12 });
+  assert.equal(result.violationsCount, 4);
+  assert.equal(result.pass, false);
+  assert.deepEqual(result.violations, [
+    "Massa > 500 Da",
+    "LogP > 5",
+    "Doadores H > 5",
+    "Aceptores H > 10",
+  ]);
 });

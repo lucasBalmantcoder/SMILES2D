@@ -1,7 +1,7 @@
 // Ponto de entrada: mantém o estado (módulo do RDKit carregado, molécula
 // atual) e conecta os eventos da interface às funções dos outros módulos.
 
-import { pick, formatFormula, roundOrDash } from "./utils.js";
+import { pick, formatFormula, roundOrDash, calculateLipinski } from "./utils.js";
 import {
   els,
   SKELETON_SVG,
@@ -14,7 +14,7 @@ import {
 import { renderMolecule } from "./molecule.js";
 import { loadHistory, addToHistory } from "./history.js";
 import { fetchByName } from "./pubchem.js";
-import { buildShareUrl, copyToClipboard, downloadSvg, downloadPng } from "./export.js";
+import { buildShareUrl, copyToClipboard, downloadSvg, downloadPng, downloadMol } from "./export.js";
 import { initThemeToggle } from "./theme.js";
 import { fetchSdf3dBySmiles, renderViewer } from "./viewer3d.js";
 
@@ -95,6 +95,7 @@ function draw(smiles, options) {
 
   var d = result.descriptors;
   var mw = pick(d, ["amw", "AMW", "exactmw"]);
+  var logp = pick(d, ["CrippenClogP", "Crippen_ClogP", "clogp", "MolLogP", "logp"]);
   var rings = pick(d, ["NumRings", "ringCount", "NumAliphaticRings"]);
   var hbd = pick(d, ["NumHBD", "lipinskiHBD", "NumHDonors"]);
   var hba = pick(d, ["NumHBA", "lipinskiHBA", "NumHAcceptors"]);
@@ -102,15 +103,40 @@ function draw(smiles, options) {
   var rot = pick(d, ["NumRotatableBonds", "NumRotBonds"]);
 
   els.mw.textContent = mw !== null ? roundOrDash(mw, 2) + " g/mol" : "—";
+  els.logp.textContent = logp !== null ? roundOrDash(logp, 2) : "—";
   els.rings.textContent = rings !== null ? roundOrDash(rings, 0) : "—";
   els.hbd.textContent = hbd !== null ? roundOrDash(hbd, 0) : "—";
   els.hba.textContent = hba !== null ? roundOrDash(hba, 0) : "—";
   els.tpsa.textContent = tpsa !== null ? roundOrDash(tpsa, 1) + " Å²" : "—";
   els.rot.textContent = rot !== null ? roundOrDash(rot, 0) : "—";
 
+  var lipinski = calculateLipinski({ mw: mw, logp: logp, hbd: hbd, hba: hba });
+  if (!lipinski) {
+    els.lipinski.textContent = "—";
+    els.lipinski.className = "";
+    els.lipinski.removeAttribute("title");
+  } else if (lipinski.violationsCount === 0) {
+    els.lipinski.textContent = "Atende (0 violações)";
+    els.lipinski.className = "lipinski-pass";
+    els.lipinski.title = "Atende a todos os critérios da Regra dos 5 de Lipinski";
+  } else if (lipinski.violationsCount === 1) {
+    els.lipinski.textContent = "Atende (1 violação)";
+    els.lipinski.className = "lipinski-warn";
+    els.lipinski.title = "Violação: " + lipinski.violations.join(", ");
+  } else {
+    els.lipinski.textContent = "Não atende (" + lipinski.violationsCount + " violações)";
+    els.lipinski.className = "lipinski-fail";
+    els.lipinski.title = "Violações: " + lipinski.violations.join(", ");
+  }
+
   setStatus("Estrutura desenhada.", "ok");
 
-  current = { smiles: result.smiles, formulaRaw: result.formula, svg: result.svg };
+  current = {
+    smiles: result.smiles,
+    formulaRaw: result.formula,
+    svg: result.svg,
+    molfile: result.molfile,
+  };
   setExportButtonsEnabled(true);
   load3d(result.smiles);
 
@@ -177,6 +203,14 @@ function handleDownloadPng() {
   downloadPng(current.svg, "molecula.png", 2).catch(function (err) {
     setStatus(err.message);
   });
+}
+
+function handleDownloadMol() {
+  if (!current || !current.molfile) {
+    setStatus("Arquivo MOL indisponível para esta estrutura.");
+    return;
+  }
+  downloadMol(current.molfile, "molecula.mol");
 }
 
 // Busca e renderiza a estrutura 3D no PubChem. Chamada automaticamente a
@@ -261,6 +295,7 @@ function init() {
   els.shareBtn.addEventListener("click", handleCopyLink);
   els.svgBtn.addEventListener("click", handleDownloadSvg);
   els.pngBtn.addEventListener("click", handleDownloadPng);
+  els.molBtn.addEventListener("click", handleDownloadMol);
   els.view3dBtn.addEventListener("click", handleView3d);
 
   if (typeof window.initRDKitModule !== "function") {

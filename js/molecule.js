@@ -27,6 +27,15 @@ export function renderMolecule(RDKitModule, smiles) {
       formula = "n/d";
     }
 
+    var molfile = "";
+    try {
+      if (typeof mol.get_molfile === "function") {
+        molfile = mol.get_molfile();
+      }
+    } catch (e) {
+      molfile = "";
+    }
+
     var descriptors = {};
     try {
       descriptors = JSON.parse(mol.get_descriptors());
@@ -34,7 +43,14 @@ export function renderMolecule(RDKitModule, smiles) {
       descriptors = {};
     }
 
-    return { ok: true, smiles: trimmed, svg: svg, formula: formula, descriptors: descriptors };
+    return {
+      ok: true,
+      smiles: trimmed,
+      svg: svg,
+      formula: formula,
+      molfile: molfile,
+      descriptors: descriptors,
+    };
   } catch (err) {
     return { ok: false, reason: "exception", message: err.message };
   } finally {

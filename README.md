@@ -8,10 +8,10 @@ Visualizador de estruturas moleculares: converte uma notação SMILES em uma est
 
 **Funcionalidades**
 
-- Desenho de estrutura 2D e cálculo de propriedades a partir do SMILES.
+- Desenho de estrutura 2D e cálculo de propriedades a partir do SMILES (massa molar, fórmula, anéis, TPSA, LogP e avaliação da Regra dos 5 de Lipinski).
 - Busca por nome comum (ex.: "ibuprofeno"), resolvida via [API pública do PubChem](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
 - Link compartilhável — a URL reflete a molécula atual (`?smiles=...`).
-- Exportação da estrutura como SVG ou PNG.
+- Exportação da estrutura como SVG, PNG ou arquivo MDL Molfile (`.mol`).
 - Histórico das últimas moléculas consultadas, salvo em `localStorage` do navegador.
 
 ## Estrutura do projeto
@@ -21,13 +21,13 @@ index.html       estrutura da página
 style.css        identidade visual
 js/app.js        ponto de entrada — estado da aplicação e eventos da interface
 js/dom.js        referências de elementos e atualizações de tela
-js/molecule.js   interação com o RDKit.js (parsing e propriedades)
+js/molecule.js   interação com o RDKit.js (parsing, molfile e propriedades)
 js/pubchem.js    busca de compostos por nome via API do PubChem
 js/history.js    histórico de moléculas consultadas (localStorage)
-js/export.js     link compartilhável, cópia para área de transferência e exportação SVG/PNG
+js/export.js     link compartilhável, cópia para área de transferência e exportação SVG/PNG/MOL
 js/theme.js      alternância entre tema claro/escuro (persistida em localStorage)
 js/viewer3d.js   resolve o SMILES para um composto do PubChem e renderiza a estrutura 3D com 3Dmol.js
-js/utils.js      formatação (fórmula, arredondamento, seleção de descritores)
+js/utils.js      formatação (fórmula, arredondamento, Lipinski, seleção de descritores)
 ```
 
 `js/app.js` é carregado como módulo ES nativo (`<script type="module">`), então a divisão em arquivos não exige nenhuma etapa de build — o navegador resolve os `import`/`export` diretamente.

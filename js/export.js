@@ -32,6 +32,15 @@ export function downloadSvg(svgString, filename) {
   }, 1000);
 }
 
+export function downloadMol(molString, filename) {
+  var blob = new Blob([molString], { type: "chemical/x-mdl-molfile;charset=utf-8" });
+  var url = URL.createObjectURL(blob);
+  triggerDownload(url, filename);
+  setTimeout(function () {
+    URL.revokeObjectURL(url);
+  }, 1000);
+}
+
 // Converte o SVG em PNG via <canvas>, numa resolução maior que a tela.
 export function downloadPng(svgString, filename, scale) {
   return new Promise(function (resolve, reject) {

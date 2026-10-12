@@ -453,6 +453,26 @@ body {
   max-width: 60%;
 }
 
+.lipinski-pass {
+  color: var(--teal) !important;
+}
+
+.lipinski-warn {
+  color: #B57519 !important;
+}
+
+[data-theme="dark"] .lipinski-warn {
+  color: #E2A03F !important;
+}
+
+.lipinski-fail {
+  color: var(--coral-deep) !important;
+}
+
+[data-theme="dark"] .lipinski-fail {
+  color: var(--coral) !important;
+}
+
 .props-hint {
   margin: 1rem 0 0;
   font-family: var(--font-mono);

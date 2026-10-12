@@ -16,7 +16,9 @@ function makeFakeRDKit({ valid = true, throwOnParse = false } = {}) {
         is_valid: () => true,
         get_svg: () => "<svg>mock</svg>",
         get_molformula: () => "C8H10N4O2",
-        get_descriptors: () => JSON.stringify({ amw: 194.19, NumRings: 2, NumHBD: 0, NumHBA: 3 }),
+        get_molfile: () => "\n  Mock Molfile V2000\n",
+        get_descriptors: () =>
+          JSON.stringify({ amw: 194.19, CrippenClogP: -0.07, NumRings: 2, NumHBD: 0, NumHBA: 3 }),
         delete: () => (deleted = true),
       };
     },
@@ -42,12 +44,14 @@ test("renderMolecule: exceção do RDKit é capturada como reason:'exception'", 
   assert.ok(result.message.includes("falha simulada"));
 });
 
-test("renderMolecule: caso válido retorna svg, fórmula e descritores", () => {
+test("renderMolecule: caso válido retorna svg, fórmula, molfile e descritores", () => {
   var result = renderMolecule(makeFakeRDKit(), "CN1C=NC2=C1C(=O)N(C(=O)N2C)C");
   assert.equal(result.ok, true);
   assert.equal(result.svg, "<svg>mock</svg>");
   assert.equal(result.formula, "C8H10N4O2");
+  assert.equal(result.molfile, "\n  Mock Molfile V2000\n");
   assert.equal(result.descriptors.amw, 194.19);
+  assert.equal(result.descriptors.CrippenClogP, -0.07);
   assert.equal(result.descriptors.NumRings, 2);
 });
 
