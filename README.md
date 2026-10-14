@@ -4,62 +4,101 @@
 
 ![Preview do Leitor de SMILES](screenshot.png)
 
-Visualizador de estruturas moleculares: converte uma notação SMILES em uma estrutura 2D e calcula propriedades básicas (massa molar, fórmula, anéis, TPSA, entre outras). Todo o processamento acontece no navegador, via [RDKit.js](https://www.rdkit.org/) (WebAssembly) — não há backend próprio nem envio de dados a um servidor.
+Visualizador de estruturas moleculares completo, leve e instalável: converte uma notação SMILES em uma estrutura 2D e 3D, calculando propriedades físico-químicas e avaliando parâmetros de biodisponibilidade oral.
 
-**Funcionalidades**
+Todo o processamento estrutural 2D e cálculos de descritores acontecem no navegador via [RDKit.js](https://www.rdkit.org/) (WebAssembly) — não há backend próprio nem envio de dados a servidores.
 
-- Desenho de estrutura 2D e cálculo de propriedades a partir do SMILES (massa molar, fórmula, anéis, TPSA, LogP e avaliação da Regra dos 5 de Lipinski).
-- Visualizador 3D interativo via [3Dmol.js](https://3dmol.csb.pitt.edu/) com suporte a múltiplos estilos (bastonetes, esferas CPK, linhas e superfície), rotação automática (spin), centralização e sincronização com o tema escuro.
-- PWA (Progressive Web App): instalável no computador e celular, com suporte a uso 100% offline através de Service Worker com cache do RDKit WebAssembly.
-- Busca por nome comum (ex.: "ibuprofeno"), resolvida via [API pública do PubChem](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
-- Link compartilhável — a URL reflete a molécula atual (`?smiles=...`).
-- Exportação da estrutura como SVG, PNG ou arquivo MDL Molfile (`.mol`).
-- Histórico das últimas moléculas consultadas, salvo em `localStorage` do navegador.
+---
+
+## Funcionalidades
+
+### 🧪 Química & Farmacologia
+- **Desenho 2D de Alta Qualidade**: Renderização vetorial precisa de estruturas moleculares a partir de qualquer SMILES válido.
+- **Cálculo de Propriedades Físico-Químicas**: Massa molar, fórmula molecular (notação de Hill), número de anéis, área de superfície polar (TPSA), doadores e aceptores de hidrogênio (HBD/HBA) e ligações rotacionáveis.
+- **LogP (Crippen)**: Estimativa de coeficiente de partição octanol-água para avaliação de lipofilicidade.
+- **Regra dos 5 de Lipinski (*Drug-likeness*)**: Avaliação automática dos 4 critérios de biodisponibilidade para fármacos orais (Massa $\le 500\text{ Da}$, $\text{LogP} \le 5$, $\text{HBD} \le 5$, $\text{HBA} \le 10$) com badges informativos de conformidade e tooltips detalhando eventuais violações.
+- **Busca por Nome Comum**: Resolução automática de nomes em inglês (ex.: *caffeine*, *ibuprofen*, *aspirin*) para SMILES, nome IUPAC e InChIKey via API pública do [PubChem](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
+
+### 🕶️ Visualização 3D Interativa
+- **Conformação Tridimensional**: Integração com a base conformacional do PubChem e renderização acelerada por WebGL via [3Dmol.js](https://3dmol.csb.pitt.edu/).
+- **4 Estilos de Representação**:
+  - **Bastonetes (*stick*)**: Modelo clássico de esferas e ligações.
+  - **Esferas (*sphere/CPK*)**: Preenchimento espacial por raio de Van der Waals.
+  - **Linhas (*wireframe*)**: Esqueleto minimalista de ligações.
+  - **Superfície (*surface*)**: Superfície de Van der Waals translúcida sobreposta à estrutura.
+- **Controles de Câmera e Animação**: Rotação automática contínua (*spin*) com alternância rápida e botão de centralização de câmera (*reset zoom*).
+- **Tema Sincronizado**: O fundo do visualizador 3D adapta-se dinamicamente entre os modos claro e escuro.
+
+### 📱 PWA (Progressive Web App) & Modo 100% Offline
+- **Instalável**: Funciona como aplicativo nativo no Windows, macOS, Linux, Android e iOS com janela dedicada e ícone próprio na área de trabalho/tela inicial.
+- **Cache Inteligente**: O Service Worker (`sw.js`) armazena em cache o binário WebAssembly (`RDKit_minimal.wasm`), scripts e estilos após o primeiro carregamento.
+- **Uso Offline**: A renderização 2D e o cálculo de todas as propriedades físico-químicas continuam operacionais mesmo sem conexão com a internet (ideal para laboratórios e salas de aula).
+
+### 💾 Exportação & Compartilhamento
+- **Exportação Multiformato**:
+  - **MDL Molfile (`.mol` V2000)**: Compatível com ChemDraw, Avogadro, PyMOL e MarvinSketch.
+  - **Vetorial (SVG)**: Para artigos científicos e apresentações sem perda de qualidade.
+  - **Imagem Rasterizada (PNG 2x)**: Exportação com fundo branco em alta resolução.
+- **Links Compartilháveis**: A URL reflete a molécula consultada em tempo real (`?smiles=...`).
+- **Histórico Local**: Armazena as últimas moléculas consultadas em `localStorage` com chips de acesso rápido.
+
+---
 
 ## Estrutura do projeto
 
 ```
-index.html            estrutura da página
-style.css             identidade visual
-sw.js                 service worker (cache e suporte PWA offline)
-manifest.webmanifest  manifesto de aplicativo PWA instalável
-icon.svg / .png       ícones do aplicativo
-js/app.js             ponto de entrada — estado da aplicação e eventos da interface
-js/dom.js             referências de elementos e atualizações de tela
-js/molecule.js        interação com o RDKit.js (parsing, molfile e propriedades)
-js/pubchem.js         busca de compostos por nome via API do PubChem
-js/history.js         histórico de moléculas consultadas (localStorage)
-js/export.js          link compartilhável, cópia para área de transferência e exportação SVG/PNG/MOL
-js/theme.js           alternância entre tema claro/escuro (persistida em localStorage)
-js/viewer3d.js        resolve o SMILES para um composto do PubChem e renderiza a estrutura 3D com 3Dmol.js
-js/utils.js           formatação (fórmula, arredondamento, Lipinski, seleção de descritores)
+index.html            Estrutura semântica da página e marcação da aplicação
+style.css             Identidade visual editorial, tipografia e temas claro/escuro
+manifest.webmanifest  Manifesto W3C com metadados para instalação PWA
+sw.js                 Service Worker com estratégias de cache e operação offline
+icon.svg / .png       Ícones vetoriais e bitmaps de alta resolução (192px e 512px)
+js/app.js             Ponto de entrada: estado global, eventos e coordenação dos módulos
+js/dom.js             Mapeamento centralizado de referências do DOM e atualizações de tela
+js/molecule.js        Interação com o RDKit.js (parsing, fórmula, Molfile e descritores)
+js/viewer3d.js        Resolução de SDF no PubChem e manipulação do 3Dmol.js
+js/pubchem.js         Consulta de compostos e metadados na API PUG REST do PubChem
+js/export.js          Exportação de arquivos (SVG, PNG, MOL), links e clipboard
+js/history.js         Gerenciamento do histórico recente persistido em localStorage
+js/theme.js           Alternância entre temas claro/escuro com suporte a listeners
+js/utils.js           Funções utilitárias puras (formatação química, Lipinski, arredondamento)
+test/                 Suíte de testes automatizados unitários
 ```
 
-`js/app.js` é carregado como módulo ES nativo (`<script type="module">`), então a divisão em arquivos não exige nenhuma etapa de build — o navegador resolve os `import`/`export` diretamente.
+A aplicação adota **módulos ES nativos** (`<script type="module">`). Não há etapa de compilação ou empacotamento (*bundler*) obrigatória para execução do frontend.
 
-**Sobre a visualização 3D:** o RDKit.js (build "minimal" usada aqui) não gera conformações tridimensionais. A estrutura 3D vem do PubChem — o SMILES é resolvido para um CID e, a partir dele, buscado o SDF 3D já calculado. Por isso, só funciona para compostos catalogados no PubChem; SMILES sintéticos ou muito incomuns podem não ter 3D disponível.
+---
 
 ## Executar localmente
 
-Como o projeto não usa build (sem npm, sem bundler), basta servir a pasta com qualquer servidor estático — abrir o `index.html` direto do disco (`file://`) pode bloquear o carregamento do WebAssembly em alguns navegadores.
+Por usar WebAssembly e Service Workers, o navegador exige que os arquivos sejam servidos via protocolo HTTP (`localhost`) ou HTTPS (e não via `file:///` direto do disco).
 
-```
+Basta iniciar qualquer servidor estático local:
+
+```bash
+# Com Python 3:
 python -m http.server 8000
-# depois acesse http://localhost:8000
+
+# Ou com Node.js:
+npx serve .
 ```
 
-## Testes e lint
+Em seguida, acesse no navegador: `http://localhost:8000`
 
-Os módulos puros (`utils.js`, `molecule.js`) têm testes automatizados, rodados com o test runner nativo do Node (sem framework externo) e verificados a cada push via GitHub Actions.
+---
 
+## Testes automatizados
+
+O projeto utiliza o **test runner nativo do Node.js** (`node --test`), garantindo execução rápida sem dependências externas pesadas:
+
+```bash
+npm test        # Executa os 21 testes unitários (node --test)
+npm run lint    # Executa a verificação de código via ESLint
 ```
-npm install     # só na primeira vez — instala o ESLint como dependência de desenvolvimento
-npm test        # roda os testes (node --test)
-npm run lint    # roda o ESLint
-```
 
-Essas dependências existem só para testes e lint em ambiente de desenvolvimento — o site publicado continua 100% estático, sem nenhuma etapa de build.
+Todos os testes são validados automaticamente a cada push ou pull request via **GitHub Actions** (CI).
+
+---
 
 ## Licença
 
-Distribuído sob a licença MIT — veja o arquivo [LICENSE](LICENSE).
+Distribuído sob a licença MIT — veja o arquivo [LICENSE](LICENSE) para mais detalhes.
