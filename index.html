@@ -27,6 +27,15 @@
 <meta name="twitter:description" content="Estrutura 2D e propriedades moleculares a partir de uma notação SMILES, calculadas direto no navegador." />
 <meta name="twitter:image" content="https://lucasbalmantcoder.github.io/SMILES2D/og-image.png" />
 
+<meta name="theme-color" content="#285A66" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="SMILES2D" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" type="image/svg+xml" href="icon.svg" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
@@ -40,10 +49,16 @@
 <header class="site-header">
   <div class="header-top">
     <p class="eyebrow">cheminformática · notação SMILES</p>
-    <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
-      <span class="theme-toggle-dot" aria-hidden="true"></span>
-      <span id="theme-toggle-label">Modo escuro</span>
-    </button>
+    <div class="header-actions">
+      <button id="install-btn" class="install-btn" type="button" hidden title="Instalar aplicativo no seu computador ou celular">
+        <span class="install-btn-icon" aria-hidden="true">↓</span>
+        <span>Instalar app</span>
+      </button>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
+        <span class="theme-toggle-dot" aria-hidden="true"></span>
+        <span id="theme-toggle-label">Modo escuro</span>
+      </button>
+    </div>
   </div>
   <h1>Leitor de SMILES</h1>
   <p class="lede">Digite uma notação SMILES e veja a estrutura 2D e as propriedades moleculares, calculadas inteiramente no seu navegador.</p>

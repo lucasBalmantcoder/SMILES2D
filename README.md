@@ -9,6 +9,8 @@ Visualizador de estruturas moleculares: converte uma notação SMILES em uma est
 **Funcionalidades**
 
 - Desenho de estrutura 2D e cálculo de propriedades a partir do SMILES (massa molar, fórmula, anéis, TPSA, LogP e avaliação da Regra dos 5 de Lipinski).
+- Visualizador 3D interativo via [3Dmol.js](https://3dmol.csb.pitt.edu/) com suporte a múltiplos estilos (bastonetes, esferas CPK, linhas e superfície), rotação automática (spin), centralização e sincronização com o tema escuro.
+- PWA (Progressive Web App): instalável no computador e celular, com suporte a uso 100% offline através de Service Worker com cache do RDKit WebAssembly.
 - Busca por nome comum (ex.: "ibuprofeno"), resolvida via [API pública do PubChem](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
 - Link compartilhável — a URL reflete a molécula atual (`?smiles=...`).
 - Exportação da estrutura como SVG, PNG ou arquivo MDL Molfile (`.mol`).
@@ -17,17 +19,20 @@ Visualizador de estruturas moleculares: converte uma notação SMILES em uma est
 ## Estrutura do projeto
 
 ```
-index.html       estrutura da página
-style.css        identidade visual
-js/app.js        ponto de entrada — estado da aplicação e eventos da interface
-js/dom.js        referências de elementos e atualizações de tela
-js/molecule.js   interação com o RDKit.js (parsing, molfile e propriedades)
-js/pubchem.js    busca de compostos por nome via API do PubChem
-js/history.js    histórico de moléculas consultadas (localStorage)
-js/export.js     link compartilhável, cópia para área de transferência e exportação SVG/PNG/MOL
-js/theme.js      alternância entre tema claro/escuro (persistida em localStorage)
-js/viewer3d.js   resolve o SMILES para um composto do PubChem e renderiza a estrutura 3D com 3Dmol.js
-js/utils.js      formatação (fórmula, arredondamento, Lipinski, seleção de descritores)
+index.html            estrutura da página
+style.css             identidade visual
+sw.js                 service worker (cache e suporte PWA offline)
+manifest.webmanifest  manifesto de aplicativo PWA instalável
+icon.svg / .png       ícones do aplicativo
+js/app.js             ponto de entrada — estado da aplicação e eventos da interface
+js/dom.js             referências de elementos e atualizações de tela
+js/molecule.js        interação com o RDKit.js (parsing, molfile e propriedades)
+js/pubchem.js         busca de compostos por nome via API do PubChem
+js/history.js         histórico de moléculas consultadas (localStorage)
+js/export.js          link compartilhável, cópia para área de transferência e exportação SVG/PNG/MOL
+js/theme.js           alternância entre tema claro/escuro (persistida em localStorage)
+js/viewer3d.js        resolve o SMILES para um composto do PubChem e renderiza a estrutura 3D com 3Dmol.js
+js/utils.js           formatação (fórmula, arredondamento, Lipinski, seleção de descritores)
 ```
 
 `js/app.js` é carregado como módulo ES nativo (`<script type="module">`), então a divisão em arquivos não exige nenhuma etapa de build — o navegador resolve os `import`/`export` diretamente.

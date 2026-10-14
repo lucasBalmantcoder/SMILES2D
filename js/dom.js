@@ -33,6 +33,7 @@ export var els = {
   viewer3dToolbar: document.getElementById("viewer3d-toolbar"),
   viewer3dSpinBtn: document.getElementById("viewer3d-spin-btn"),
   viewer3dResetBtn: document.getElementById("viewer3d-reset-btn"),
+  installBtn: document.getElementById("install-btn"),
 };
 
 export var SKELETON_SVG =

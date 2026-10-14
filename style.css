@@ -95,6 +95,45 @@ body {
   margin-bottom: 0.9rem;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.install-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--teal);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--teal);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.install-btn:hover {
+  background: var(--teal);
+  color: #F4F8F6;
+}
+
+.install-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.install-btn-icon {
+  font-weight: 600;
+  font-size: 0.8rem;
+  line-height: 1;
+}
+
 .theme-toggle {
   display: inline-flex;
   align-items: center;

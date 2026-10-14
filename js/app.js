@@ -282,9 +282,22 @@ function load3d(smiles) {
       // Se o usuário desenhou outra molécula enquanto a busca corria, descarta.
       if (!current || current.smiles !== smiles) return;
 
-      viewer3dState = { sdf: sdf, smiles: smiles, viewer: null };
+      viewer3dState = {
+        sdf: sdf,
+        smiles: smiles,
+        viewer: null,
+        isSpinning: false,
+        currentStyle: "stick",
+      };
       els.viewer3dContainer.hidden = false;
       viewer3dState.viewer = renderViewer(els.viewer3dContainer, sdf);
+
+      if (els.viewer3dToolbar) {
+        els.viewer3dToolbar.hidden = false;
+      }
+      updateSpinButton(false);
+      setActiveStyleButton("stick");
+
       els.viewer3dStatus.textContent = "Estrutura 3D carregada (dados do PubChem).";
       els.viewer3dStatus.setAttribute("data-state", "ok");
       els.view3dBtn.textContent = "Ocultar 3D";
@@ -306,7 +319,15 @@ function handleView3d() {
   if (viewer3dState.sdf && viewer3dState.smiles === current.smiles) {
     var nowHidden = !els.viewer3dContainer.hidden;
     els.viewer3dContainer.hidden = nowHidden;
+    if (els.viewer3dToolbar) {
+      els.viewer3dToolbar.hidden = nowHidden;
+    }
     els.view3dBtn.textContent = nowHidden ? "Mostrar 3D" : "Ocultar 3D";
+    if (nowHidden && viewer3dState.isSpinning) {
+      setViewerSpin(viewer3dState.viewer, false);
+      viewer3dState.isSpinning = false;
+      updateSpinButton(false);
+    }
     return;
   }
 
@@ -314,8 +335,79 @@ function handleView3d() {
   load3d(current.smiles);
 }
 
+function handle3dStyleClick(evt) {
+  var btn = evt.target.closest("button[data-style]");
+  if (!btn || !viewer3dState.viewer) return;
+  var style = btn.getAttribute("data-style");
+  viewer3dState.currentStyle = style;
+  applyViewerStyle(viewer3dState.viewer, style);
+  setActiveStyleButton(style);
+}
+
+function handle3dSpinClick() {
+  if (!viewer3dState.viewer) return;
+  var next = !viewer3dState.isSpinning;
+  viewer3dState.isSpinning = next;
+  setViewerSpin(viewer3dState.viewer, next);
+  updateSpinButton(next);
+}
+
+function handle3dResetClick() {
+  if (!viewer3dState.viewer) return;
+  resetViewerCamera(viewer3dState.viewer);
+}
+
+// PWA: registro do Service Worker para cache e uso offline
+function registerServiceWorker() {
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("./sw.js").catch(function (err) {
+        console.warn("Falha ao registrar Service Worker:", err);
+      });
+    });
+  }
+}
+
+// PWA: instalação via botão customizado no cabeçalho
+var deferredInstallPrompt = null;
+
+function setupPwaInstall() {
+  if (!els.installBtn) return;
+
+  window.addEventListener("beforeinstallprompt", function (evt) {
+    evt.preventDefault();
+    deferredInstallPrompt = evt;
+    els.installBtn.hidden = false;
+  });
+
+  els.installBtn.addEventListener("click", function () {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(function () {
+      deferredInstallPrompt = null;
+      els.installBtn.hidden = true;
+    });
+  });
+
+  window.addEventListener("appinstalled", function () {
+    deferredInstallPrompt = null;
+    els.installBtn.hidden = true;
+  });
+}
+
 function init() {
-  initThemeToggle(document.getElementById("theme-toggle"), document.getElementById("theme-toggle-label"));
+  initThemeToggle(
+    document.getElementById("theme-toggle"),
+    document.getElementById("theme-toggle-label"),
+    function (nextTheme) {
+      if (viewer3dState.viewer) {
+        setViewerTheme(viewer3dState.viewer, nextTheme);
+      }
+    }
+  );
+
+  registerServiceWorker();
+  setupPwaInstall();
 
   els.drawBtn.disabled = true;
   setExportButtonsEnabled(false);
@@ -352,6 +444,16 @@ function init() {
   els.pngBtn.addEventListener("click", handleDownloadPng);
   els.molBtn.addEventListener("click", handleDownloadMol);
   els.view3dBtn.addEventListener("click", handleView3d);
+
+  if (els.viewer3dToolbar) {
+    els.viewer3dToolbar.addEventListener("click", handle3dStyleClick);
+  }
+  if (els.viewer3dSpinBtn) {
+    els.viewer3dSpinBtn.addEventListener("click", handle3dSpinClick);
+  }
+  if (els.viewer3dResetBtn) {
+    els.viewer3dResetBtn.addEventListener("click", handle3dResetClick);
+  }
 
   if (typeof window.initRDKitModule !== "function") {
     setStatus("Não foi possível carregar o RDKit.js (verifique a conexão).");
