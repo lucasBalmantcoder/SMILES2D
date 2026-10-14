@@ -417,6 +417,68 @@ body {
   margin-top: 0.7rem;
 }
 
+[data-theme="dark"] .viewer3d-container {
+  background: #14181A;
+}
+
+.viewer3d-toolbar {
+  margin-top: 0.65rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.4rem 0;
+  border-top: 1px dashed var(--paper-line);
+}
+
+.viewer3d-styles,
+.viewer3d-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.toolbar-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-right: 0.15rem;
+}
+
+.btn-tool {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 2px;
+  background: var(--paper);
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.btn-tool:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.btn-tool.active,
+.btn-tool[aria-pressed="true"] {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #F4F8F6;
+}
+
+.btn-tool:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
 /* ---------- properties card ---------- */
 
 .props-list {

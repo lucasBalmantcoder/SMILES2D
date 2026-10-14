@@ -126,6 +126,19 @@
       </div>
       <p id="viewer3d-status" class="status-line" role="status" aria-live="polite"></p>
       <div id="viewer3d-container" class="viewer3d-container" hidden></div>
+      <div id="viewer3d-toolbar" class="viewer3d-toolbar" hidden>
+        <div class="viewer3d-styles" role="group" aria-label="Estilo de representação 3D">
+          <span class="toolbar-label">estilo</span>
+          <button type="button" class="btn-tool active" data-style="stick">bastonetes</button>
+          <button type="button" class="btn-tool" data-style="sphere">esferas</button>
+          <button type="button" class="btn-tool" data-style="line">linhas</button>
+          <button type="button" class="btn-tool" data-style="surface">superfície</button>
+        </div>
+        <div class="viewer3d-actions" role="group" aria-label="Ações do modelo 3D">
+          <button id="viewer3d-spin-btn" type="button" class="btn-tool" aria-pressed="false">girar</button>
+          <button id="viewer3d-reset-btn" type="button" class="btn-tool">centralizar</button>
+        </div>
+      </div>
     </div>
   </section>
 

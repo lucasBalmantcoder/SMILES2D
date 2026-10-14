@@ -16,21 +16,76 @@ import { loadHistory, addToHistory } from "./history.js";
 import { fetchByName } from "./pubchem.js";
 import { buildShareUrl, copyToClipboard, downloadSvg, downloadPng, downloadMol } from "./export.js";
 import { initThemeToggle } from "./theme.js";
-import { fetchSdf3dBySmiles, renderViewer } from "./viewer3d.js";
+import {
+  fetchSdf3dBySmiles,
+  renderViewer,
+  applyViewerStyle,
+  setViewerTheme,
+  setViewerSpin,
+  resetViewerCamera,
+} from "./viewer3d.js";
 
 var RDKIT_CDN_BASE = "https://unpkg.com/@rdkit/rdkit@2026.9.1/dist/";
 var DEFAULT_SMILES = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"; // cafeína
 
 var RDKitModule = null;
 var current = null; // { smiles, formulaRaw, svg }
-var viewer3dState = { sdf: null, viewer: null, smiles: null };
+var viewer3dState = {
+  sdf: null,
+  viewer: null,
+  smiles: null,
+  isSpinning: false,
+  currentStyle: "stick",
+};
+
+function updateSpinButton(spinning) {
+  if (!els.viewer3dSpinBtn) return;
+  els.viewer3dSpinBtn.setAttribute("aria-pressed", spinning ? "true" : "false");
+  els.viewer3dSpinBtn.textContent = spinning ? "pausar" : "girar";
+  if (spinning) {
+    els.viewer3dSpinBtn.classList.add("active");
+  } else {
+    els.viewer3dSpinBtn.classList.remove("active");
+  }
+}
+
+function setActiveStyleButton(styleName) {
+  if (!els.viewer3dToolbar) return;
+  var buttons = els.viewer3dToolbar.querySelectorAll(".viewer3d-styles button");
+  buttons.forEach(function (btn) {
+    if (btn.getAttribute("data-style") === styleName) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
 
 function resetViewer3d() {
-  viewer3dState = { sdf: null, viewer: null, smiles: null };
+  if (viewer3dState.viewer) {
+    try {
+      setViewerSpin(viewer3dState.viewer, false);
+      if (typeof viewer3dState.viewer.clear === "function") {
+        viewer3dState.viewer.clear();
+      }
+    } catch (e) {}
+  }
+  viewer3dState = {
+    sdf: null,
+    viewer: null,
+    smiles: null,
+    isSpinning: false,
+    currentStyle: "stick",
+  };
   els.viewer3dContainer.hidden = true;
   els.viewer3dContainer.innerHTML = "";
+  if (els.viewer3dToolbar) {
+    els.viewer3dToolbar.hidden = true;
+  }
   els.viewer3dStatus.textContent = "";
   els.view3dBtn.textContent = "3D";
+  updateSpinButton(false);
+  setActiveStyleButton("stick");
 }
 
 function renderHistory() {

@@ -17,7 +17,7 @@ function applyTheme(theme) {
   }
 }
 
-export function initThemeToggle(buttonEl, labelEl) {
+export function initThemeToggle(buttonEl, labelEl, onThemeChange) {
   function updateLabel(theme) {
     buttonEl.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
     labelEl.textContent = theme === "dark" ? "Modo claro" : "Modo escuro";
@@ -33,6 +33,9 @@ export function initThemeToggle(buttonEl, labelEl) {
       window.localStorage.setItem(THEME_KEY, next);
     } catch (e) {
       // localStorage indisponível — a preferência simplesmente não persiste.
+    }
+    if (typeof onThemeChange === "function") {
+      onThemeChange(next);
     }
   });
 }
