@@ -117,8 +117,19 @@
   <section class="card specimen-card" aria-labelledby="specimen-title">
     <h2 id="specimen-title" class="card-label">02 — estrutura</h2>
 
-    <div id="canvas-wrap" class="canvas-wrap">
-      <p id="canvas-placeholder" class="canvas-placeholder">A estrutura desenhada aparece aqui.</p>
+    <div id="canvas-wrap" class="canvas-wrap" tabindex="0" role="region" aria-label="Visualizador 2D da molécula">
+      <div class="canvas-toolbar" id="canvas-toolbar" role="toolbar" aria-label="Controles do visualizador 2D">
+        <button id="zoom-in-btn" class="canvas-tool-btn" type="button" title="Aumentar zoom (+)" aria-label="Aumentar zoom" disabled>+</button>
+        <button id="zoom-out-btn" class="canvas-tool-btn" type="button" title="Diminuir zoom (-)" aria-label="Diminuir zoom" disabled>−</button>
+        <button id="zoom-reset-btn" class="canvas-tool-btn" type="button" title="Redefinir visualização (100%)" aria-label="Redefinir visualização" disabled>100%</button>
+        <span class="canvas-tool-sep" aria-hidden="true"></span>
+        <button id="atom-indices-btn" class="canvas-tool-btn" type="button" title="Alternar numeração de átomos" aria-label="Numeração de átomos" aria-pressed="false" disabled>Nº</button>
+        <button id="canvas-fs-btn" class="canvas-tool-btn" type="button" title="Alternar tela cheia" aria-label="Tela cheia" aria-pressed="false" disabled>⛶</button>
+      </div>
+
+      <div id="canvas-viewport" class="canvas-viewport">
+        <p id="canvas-placeholder" class="canvas-placeholder">A estrutura desenhada aparece aqui.</p>
+      </div>
     </div>
 
     <div class="formula-row">

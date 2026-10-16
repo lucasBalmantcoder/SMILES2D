@@ -330,17 +330,144 @@ body {
 /* ---------- specimen card ---------- */
 
 .canvas-wrap {
+  position: relative;
   background: var(--canvas-bg);
   border: 1px solid var(--paper-line);
   border-radius: 2px;
-  min-height: 260px;
+  min-height: 280px;
+  height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem;
+  padding: 0;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none;
 }
 
-.canvas-wrap svg { max-width: 100%; height: auto; }
+.canvas-wrap:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+.canvas-wrap.has-mol {
+  cursor: grab;
+}
+
+.canvas-wrap.is-dragging {
+  cursor: grabbing;
+}
+
+.canvas-toolbar {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 3px;
+  padding: 0.2rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.canvas-tool-btn {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  min-width: 26px;
+  height: 24px;
+  padding: 0 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  user-select: none;
+}
+
+.canvas-tool-btn:hover:not(:disabled) {
+  background: var(--paper);
+  border-color: var(--panel-border);
+  color: var(--teal);
+}
+
+.canvas-tool-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 1px;
+}
+
+.canvas-tool-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.canvas-tool-btn.active,
+.canvas-tool-btn[aria-pressed="true"] {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #F4F8F6;
+}
+
+.canvas-tool-sep {
+  display: inline-block;
+  width: 1px;
+  height: 14px;
+  background: var(--panel-border);
+  margin: 0 0.15rem;
+}
+
+.canvas-viewport {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.canvas-viewport svg {
+  max-width: 90%;
+  max-height: 90%;
+  width: auto;
+  height: auto;
+  display: block;
+  pointer-events: none;
+}
+
+/* Fullscreen mode */
+.canvas-wrap.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  border-radius: 0;
+  border: none;
+  background: var(--canvas-bg);
+}
+
+.canvas-wrap.is-fullscreen .canvas-toolbar {
+  top: 1rem;
+  right: 1rem;
+  padding: 0.35rem;
+  gap: 0.35rem;
+}
+
+.canvas-wrap.is-fullscreen .canvas-tool-btn {
+  min-width: 32px;
+  height: 30px;
+  font-size: 0.85rem;
+}
 
 .canvas-placeholder {
   font-family: var(--font-mono);
@@ -349,6 +476,7 @@ body {
   text-align: center;
   margin: 0;
   padding: 1rem;
+  pointer-events: auto;
 }
 
 .skeleton-mol {

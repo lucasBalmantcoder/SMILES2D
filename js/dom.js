@@ -33,6 +33,13 @@ export var els = {
   viewer3dToolbar: document.getElementById("viewer3d-toolbar"),
   viewer3dSpinBtn: document.getElementById("viewer3d-spin-btn"),
   viewer3dResetBtn: document.getElementById("viewer3d-reset-btn"),
+  zoomInBtn: document.getElementById("zoom-in-btn"),
+  zoomOutBtn: document.getElementById("zoom-out-btn"),
+  zoomResetBtn: document.getElementById("zoom-reset-btn"),
+  atomIndicesBtn: document.getElementById("atom-indices-btn"),
+  canvasFsBtn: document.getElementById("canvas-fs-btn"),
+  canvasViewport: document.getElementById("canvas-viewport"),
+  canvasToolbar: document.getElementById("canvas-toolbar"),
   installBtn: document.getElementById("install-btn"),
 };
 
@@ -77,6 +84,14 @@ export function setPubchemFields(iupacName, inchikey) {
   els.inchikey.textContent = inchikey || "—";
 }
 
+export function setCanvasToolsEnabled(enabled) {
+  if (els.zoomInBtn) els.zoomInBtn.disabled = !enabled;
+  if (els.zoomOutBtn) els.zoomOutBtn.disabled = !enabled;
+  if (els.zoomResetBtn) els.zoomResetBtn.disabled = !enabled;
+  if (els.atomIndicesBtn) els.atomIndicesBtn.disabled = !enabled;
+  if (els.canvasFsBtn) els.canvasFsBtn.disabled = !enabled;
+}
+
 export function setExportButtonsEnabled(enabled) {
   els.copySmilesBtn.disabled = !enabled;
   els.shareBtn.disabled = !enabled;
@@ -84,10 +99,14 @@ export function setExportButtonsEnabled(enabled) {
   els.pngBtn.disabled = !enabled;
   els.molBtn.disabled = !enabled;
   els.view3dBtn.disabled = !enabled;
+  setCanvasToolsEnabled(enabled);
 }
 
 export function showErrorPlaceholder(message) {
-  els.canvasWrap.innerHTML = "";
+  var target = els.canvasViewport || els.canvasWrap;
+  target.innerHTML = "";
   els.placeholder.textContent = message;
-  els.canvasWrap.appendChild(els.placeholder);
+  target.appendChild(els.placeholder);
+  setCanvasToolsEnabled(false);
 }
+

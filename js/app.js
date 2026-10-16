@@ -38,6 +38,193 @@ var viewer3dState = {
   currentStyle: "stick",
 };
 
+var canvas2dState = {
+  scale: 1,
+  panX: 0,
+  panY: 0,
+  isDragging: false,
+  startX: 0,
+  startY: 0,
+  startPanX: 0,
+  startPanY: 0,
+  showAtomIndices: false,
+  isFullscreen: false,
+};
+
+function applyCanvasTransform() {
+  if (!els.canvasViewport) return;
+  els.canvasViewport.style.transform =
+    "translate(" + canvas2dState.panX + "px, " + canvas2dState.panY + "px) scale(" + canvas2dState.scale + ")";
+  if (els.zoomResetBtn) {
+    els.zoomResetBtn.textContent = Math.round(canvas2dState.scale * 100) + "%";
+  }
+}
+
+function resetCanvasTransform() {
+  canvas2dState.scale = 1;
+  canvas2dState.panX = 0;
+  canvas2dState.panY = 0;
+  applyCanvasTransform();
+}
+
+function setZoom(newScale, focalX, focalY) {
+  var clamped = Math.max(0.3, Math.min(6.0, newScale));
+  if (Math.abs(clamped - canvas2dState.scale) < 0.001) return;
+
+  if (focalX !== undefined && focalY !== undefined && els.canvasWrap) {
+    var rect = els.canvasWrap.getBoundingClientRect();
+    var cx = focalX - rect.left - rect.width / 2;
+    var cy = focalY - rect.top - rect.height / 2;
+    var ratio = clamped / canvas2dState.scale;
+    canvas2dState.panX = cx - (cx - canvas2dState.panX) * ratio;
+    canvas2dState.panY = cy - (cy - canvas2dState.panY) * ratio;
+  }
+  canvas2dState.scale = clamped;
+  applyCanvasTransform();
+}
+
+function handleZoomIn() {
+  setZoom(canvas2dState.scale * 1.25);
+}
+
+function handleZoomOut() {
+  setZoom(canvas2dState.scale / 1.25);
+}
+
+function handleZoomReset() {
+  resetCanvasTransform();
+}
+
+function handleToggleAtomIndices() {
+  canvas2dState.showAtomIndices = !canvas2dState.showAtomIndices;
+  if (els.atomIndicesBtn) {
+    els.atomIndicesBtn.setAttribute("aria-pressed", canvas2dState.showAtomIndices ? "true" : "false");
+    if (canvas2dState.showAtomIndices) {
+      els.atomIndicesBtn.classList.add("active");
+    } else {
+      els.atomIndicesBtn.classList.remove("active");
+    }
+  }
+  if (current && current.smiles) {
+    draw(current.smiles, { addHistory: false, preserveTransform: true });
+  }
+}
+
+function updateFullscreenUi(isFullscreen) {
+  canvas2dState.isFullscreen = isFullscreen;
+  if (!els.canvasFsBtn || !els.canvasWrap) return;
+  els.canvasFsBtn.setAttribute("aria-pressed", isFullscreen ? "true" : "false");
+  if (isFullscreen) {
+    els.canvasWrap.classList.add("is-fullscreen");
+    els.canvasFsBtn.classList.add("active");
+    els.canvasFsBtn.textContent = "✕";
+    els.canvasFsBtn.title = "Sair da tela cheia (Esc)";
+    els.canvasFsBtn.setAttribute("aria-label", "Sair da tela cheia");
+  } else {
+    els.canvasWrap.classList.remove("is-fullscreen");
+    els.canvasFsBtn.classList.remove("active");
+    els.canvasFsBtn.textContent = "⛶";
+    els.canvasFsBtn.title = "Alternar tela cheia";
+    els.canvasFsBtn.setAttribute("aria-label", "Alternar tela cheia");
+  }
+}
+
+function handleToggleFullscreen() {
+  if (!els.canvasWrap) return;
+  var isFs = document.fullscreenElement === els.canvasWrap || canvas2dState.isFullscreen;
+  if (isFs) {
+    if (document.fullscreenElement) {
+      document.exitFullscreen().catch(function () {});
+    }
+    updateFullscreenUi(false);
+  } else {
+    if (typeof els.canvasWrap.requestFullscreen === "function") {
+      els.canvasWrap.requestFullscreen().then(function () {
+        updateFullscreenUi(true);
+      }).catch(function () {
+        updateFullscreenUi(true);
+      });
+    } else {
+      updateFullscreenUi(true);
+    }
+  }
+}
+
+function setupCanvasInteractivity() {
+  if (!els.canvasWrap) return;
+
+  els.canvasWrap.addEventListener("pointerdown", function (e) {
+    if (e.target && e.target.closest("#canvas-toolbar")) return;
+    if (!current) return;
+
+    canvas2dState.isDragging = true;
+    canvas2dState.startX = e.clientX;
+    canvas2dState.startY = e.clientY;
+    canvas2dState.startPanX = canvas2dState.panX;
+    canvas2dState.startPanY = canvas2dState.panY;
+    els.canvasWrap.classList.add("is-dragging");
+    try {
+      els.canvasWrap.setPointerCapture(e.pointerId);
+    } catch (err) {}
+  });
+
+  els.canvasWrap.addEventListener("pointermove", function (e) {
+    if (!canvas2dState.isDragging) return;
+    canvas2dState.panX = canvas2dState.startPanX + (e.clientX - canvas2dState.startX);
+    canvas2dState.panY = canvas2dState.startPanY + (e.clientY - canvas2dState.startY);
+    applyCanvasTransform();
+  });
+
+  function stopDrag(e) {
+    if (canvas2dState.isDragging) {
+      canvas2dState.isDragging = false;
+      els.canvasWrap.classList.remove("is-dragging");
+      try {
+        if (e && e.pointerId) {
+          els.canvasWrap.releasePointerCapture(e.pointerId);
+        }
+      } catch (err) {}
+    }
+  }
+
+  els.canvasWrap.addEventListener("pointerup", stopDrag);
+  els.canvasWrap.addEventListener("pointercancel", stopDrag);
+
+  els.canvasWrap.addEventListener("wheel", function (e) {
+    if (!current) return;
+    e.preventDefault();
+    var factor = e.deltaY < 0 ? 1.15 : 0.87;
+    setZoom(canvas2dState.scale * factor, e.clientX, e.clientY);
+  }, { passive: false });
+
+  els.canvasWrap.addEventListener("dblclick", function (e) {
+    if (e.target && e.target.closest("#canvas-toolbar")) return;
+    if (!current) return;
+    resetCanvasTransform();
+  });
+
+  document.addEventListener("fullscreenchange", function () {
+    var isFs = document.fullscreenElement === els.canvasWrap;
+    updateFullscreenUi(isFs);
+  });
+
+  window.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && canvas2dState.isFullscreen) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(function () {});
+      }
+      updateFullscreenUi(false);
+    }
+  });
+
+  if (els.zoomInBtn) els.zoomInBtn.addEventListener("click", handleZoomIn);
+  if (els.zoomOutBtn) els.zoomOutBtn.addEventListener("click", handleZoomOut);
+  if (els.zoomResetBtn) els.zoomResetBtn.addEventListener("click", handleZoomReset);
+  if (els.atomIndicesBtn) els.atomIndicesBtn.addEventListener("click", handleToggleAtomIndices);
+  if (els.canvasFsBtn) els.canvasFsBtn.addEventListener("click", handleToggleFullscreen);
+}
+
+
 function updateSpinButton(spinning) {
   if (!els.viewer3dSpinBtn) return;
   els.viewer3dSpinBtn.setAttribute("aria-pressed", spinning ? "true" : "false");
@@ -119,17 +306,21 @@ function renderHistory() {
 function draw(smiles, options) {
   options = options || {};
   var addHistory = options.addHistory !== false;
+  var preserveTransform = options.preserveTransform === true;
 
   if (!RDKitModule) {
     setStatus("RDKit ainda está carregando, aguarde…");
     return;
   }
 
-  var result = renderMolecule(RDKitModule, smiles);
+  var result = renderMolecule(RDKitModule, smiles, {
+    addAtomIndices: canvas2dState.showAtomIndices,
+  });
   resetViewer3d();
 
   if (!result.ok) {
     current = null;
+    if (els.canvasWrap) els.canvasWrap.classList.remove("has-mol");
     setExportButtonsEnabled(false);
     resetProps();
 
@@ -144,7 +335,13 @@ function draw(smiles, options) {
     return;
   }
 
-  els.canvasWrap.innerHTML = result.svg;
+  var target = els.canvasViewport || els.canvasWrap;
+  target.innerHTML = result.svg;
+  if (els.canvasWrap) els.canvasWrap.classList.add("has-mol");
+
+  if (!preserveTransform) {
+    resetCanvasTransform();
+  }
   setPubchemFields(null, null);
   els.formulaOut.innerHTML = formatFormula(result.formula);
 
@@ -412,7 +609,8 @@ function init() {
   els.drawBtn.disabled = true;
   setExportButtonsEnabled(false);
   setStatus("Carregando RDKit…");
-  els.canvasWrap.innerHTML = SKELETON_SVG;
+  (els.canvasViewport || els.canvasWrap).innerHTML = SKELETON_SVG;
+  setupCanvasInteractivity();
   renderHistory();
 
   document.querySelectorAll(".chip").forEach(function (chip) {

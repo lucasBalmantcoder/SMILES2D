@@ -85,3 +85,25 @@ test("renderMolecule: calcula fórmula a partir de get_json quando get_molformul
   assert.equal(result.ok, true);
   assert.equal(result.formula, "CH4O");
 });
+
+test("renderMolecule: suporta addAtomIndices via get_svg_with_highlights", () => {
+  var calledDetails = null;
+  var fake = {
+    get_mol: () => ({
+      is_valid: () => true,
+      get_svg: () => "<svg>padrao</svg>",
+      get_svg_with_highlights: (details) => {
+        calledDetails = JSON.parse(details);
+        return "<svg>com_indices</svg>";
+      },
+      get_molformula: () => "CH4",
+      get_descriptors: () => "{}",
+      delete: () => {},
+    }),
+  };
+  var result = renderMolecule(fake, "C", { addAtomIndices: true });
+  assert.equal(result.ok, true);
+  assert.equal(result.svg, "<svg>com_indices</svg>");
+  assert.equal(calledDetails.addAtomIndices, true);
+});
+

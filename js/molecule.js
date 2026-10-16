@@ -54,7 +54,8 @@ function extractFormula(mol) {
   return "n/d";
 }
 
-export function renderMolecule(RDKitModule, smiles) {
+export function renderMolecule(RDKitModule, smiles, options) {
+  options = options || {};
   var trimmed = (smiles || "").trim();
   if (!trimmed) {
     return { ok: false, reason: "empty" };
@@ -68,7 +69,18 @@ export function renderMolecule(RDKitModule, smiles) {
       return { ok: false, reason: "invalid" };
     }
 
-    var svg = mol.get_svg(320, 260);
+    var svg = "";
+    if (options.addAtomIndices && typeof mol.get_svg_with_highlights === "function") {
+      try {
+        svg = mol.get_svg_with_highlights(
+          JSON.stringify({ width: 320, height: 260, addAtomIndices: true })
+        );
+      } catch (e) {
+        svg = mol.get_svg(320, 260);
+      }
+    } else {
+      svg = mol.get_svg(320, 260);
+    }
     var formula = extractFormula(mol);
 
     var molfile = "";
