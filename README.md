@@ -20,7 +20,15 @@ Todo o processamento estrutural 2D e cálculos de descritores acontecem no naveg
   - **Modo Tela Cheia**: Expansão com um clique (`⛶`) para projeções em aulas, palestras e conferências.
 - **Cálculo de Propriedades Físico-Químicas**: Massa molar, fórmula molecular (notação de Hill), número de anéis, área de superfície polar (TPSA), doadores e aceptores de hidrogênio (HBD/HBA) e ligações rotacionáveis.
 - **LogP (Crippen)**: Estimativa de coeficiente de partição octanol-água para avaliação de lipofilicidade.
+- **Solubilidade Aquosa (ESOL Delaney)**: Estimativa de $\text{Log S}$ pelo modelo preditivo de Delaney (2004) a partir de descritores topológicos.
 - **Regra dos 5 de Lipinski (*Drug-likeness*)**: Avaliação automática dos 4 critérios de biodisponibilidade para fármacos orais (Massa $\le 500\text{ Da}$, $\text{LogP} \le 5$, $\text{HBD} \le 5$, $\text{HBA} \le 10$) com badges informativos de conformidade e tooltips detalhando eventuais violações.
+- **Radar de Biodisponibilidade (*SwissADME style*)**: Gráfico vetorial em teia de aranha (radar com 6 eixos) avaliando se a molécula situa-se dentro da zona ideal para absorção oral:
+  - **LIPO** (Lipofilicidade): $-0.7 \le \text{XLOGP3} \le +5.0$
+  - **SIZE** (Tamanho): $150 \le \text{MW} \le 500\text{ g/mol}$
+  - **POLAR** (Polaridade): $20 \le \text{TPSA} \le 130\text{ \AA}^2$
+  - **INSOLU** (Insolubilidade): $-6.0 \le \text{LogS} \le 0.0$
+  - **INSATU** (Insaturação): $0.25 \le \text{Fsp}^3 \le 1.0$
+  - **FLEX** (Flexibilidade): $0 \le \text{RotBonds} \le 9$
 - **Busca por Nome Comum**: Resolução automática de nomes em inglês (ex.: *caffeine*, *ibuprofen*, *aspirin*) para SMILES, nome IUPAC e InChIKey via API pública do [PubChem](https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest).
 
 ### 🕶️ Visualização 3D Interativa
@@ -59,6 +67,7 @@ icon.svg / .png       Ícones vetoriais e bitmaps de alta resolução (192px e 5
 js/app.js             Ponto de entrada: estado global, eventos e coordenação dos módulos
 js/dom.js             Mapeamento centralizado de referências do DOM e atualizações de tela
 js/molecule.js        Interação com o RDKit.js (parsing, fórmula, Molfile e descritores)
+js/radar.js           Cálculo de ESOL e geração vetorial do Radar de Biodisponibilidade
 js/viewer3d.js        Resolução de SDF no PubChem e manipulação do 3Dmol.js
 js/pubchem.js         Consulta de compostos e metadados na API PUG REST do PubChem
 js/export.js          Exportação de arquivos (SVG, PNG, MOL), links e clipboard

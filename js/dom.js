@@ -16,8 +16,14 @@ export var els = {
   hba: document.getElementById("prop-hba"),
   tpsa: document.getElementById("prop-tpsa"),
   rot: document.getElementById("prop-rot"),
+  esol: document.getElementById("prop-esol"),
+  fsp3: document.getElementById("prop-fsp3"),
   iupac: document.getElementById("prop-iupac"),
   inchikey: document.getElementById("prop-inchikey"),
+  radarBadge: document.getElementById("radar-badge"),
+  radarChartWrap: document.getElementById("radar-chart-wrap"),
+  radarDetails: document.getElementById("radar-details"),
+  radarChips: document.getElementById("radar-chips"),
   nameInput: document.getElementById("name-input"),
   searchBtn: document.getElementById("search-btn"),
   copySmilesBtn: document.getElementById("copy-smiles-btn"),
@@ -74,9 +80,21 @@ export function resetProps() {
   els.hba.textContent = "—";
   els.tpsa.textContent = "—";
   els.rot.textContent = "—";
+  if (els.esol) els.esol.textContent = "—";
+  if (els.fsp3) els.fsp3.textContent = "—";
   els.formulaOut.textContent = "—";
   els.iupac.textContent = "—";
   els.inchikey.textContent = "—";
+  if (els.radarBadge) {
+    els.radarBadge.textContent = "—";
+    els.radarBadge.className = "radar-badge";
+    els.radarBadge.removeAttribute("title");
+  }
+  if (els.radarChartWrap) {
+    els.radarChartWrap.innerHTML = '<p class="canvas-placeholder">Desenhe uma molécula para gerar o radar.</p>';
+  }
+  if (els.radarDetails) els.radarDetails.hidden = true;
+  if (els.radarChips) els.radarChips.innerHTML = "";
 }
 
 export function setPubchemFields(iupacName, inchikey) {

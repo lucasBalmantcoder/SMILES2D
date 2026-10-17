@@ -1,5 +1,5 @@
 // Service Worker — Leitor de SMILES (PWA Offline)
-var CACHE_NAME = "smiles2d-v2";
+var CACHE_NAME = "smiles2d-v3";
 
 var PRECACHE_URLS = [
   "./",
@@ -15,6 +15,7 @@ var PRECACHE_URLS = [
   "./js/history.js",
   "./js/molecule.js",
   "./js/pubchem.js",
+  "./js/radar.js",
   "./js/theme.js",
   "./js/utils.js",
   "./js/viewer3d.js",

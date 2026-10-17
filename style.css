@@ -710,6 +710,214 @@ body {
   line-height: 1.5;
 }
 
+/* ---------- radar de biodisponibilidade ---------- */
+
+.radar-section {
+  margin-top: 1.8rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--paper-line);
+}
+
+.radar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.radar-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--panel-border);
+  background: var(--paper);
+  color: var(--ink-soft);
+}
+
+.radar-badge.pass {
+  border-color: var(--teal);
+  background: rgba(24, 114, 99, 0.1);
+  color: var(--teal);
+}
+
+.radar-badge.warn {
+  border-color: #B57519;
+  background: rgba(181, 117, 25, 0.1);
+  color: #B57519;
+}
+
+[data-theme="dark"] .radar-badge.warn {
+  border-color: #E2A03F;
+  background: rgba(226, 160, 63, 0.15);
+  color: #E2A03F;
+}
+
+.radar-chart-wrap {
+  background: var(--canvas-bg);
+  border: 1px solid var(--paper-line);
+  border-radius: 2px;
+  min-height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  position: relative;
+}
+
+.radar-svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+}
+
+.radar-empty-text {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  fill: var(--ink-soft);
+}
+
+/* Elementos do gráfico radar */
+.radar-grid-poly {
+  fill: none;
+  stroke: var(--paper-line);
+  stroke-width: 1;
+}
+
+.radar-axis-line {
+  stroke: var(--paper-line);
+  stroke-width: 1;
+  stroke-dasharray: 2 2;
+}
+
+/* Área ótima rosa translúcida padrão SwissADME */
+.radar-opt-zone-max {
+  fill: rgba(229, 90, 120, 0.2);
+  stroke: rgba(229, 90, 120, 0.6);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
+}
+
+.radar-opt-zone-min {
+  fill: var(--canvas-bg);
+  stroke: rgba(229, 90, 120, 0.6);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+}
+
+/* Polígono da molécula */
+.radar-mol-poly {
+  fill: rgba(24, 114, 99, 0.35);
+  stroke: var(--teal);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+}
+
+[data-theme="dark"] .radar-mol-poly {
+  fill: rgba(46, 164, 142, 0.35);
+  stroke: var(--teal);
+}
+
+.radar-point {
+  fill: var(--teal);
+  stroke: var(--paper);
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: r 0.15s ease;
+}
+
+.radar-point:hover {
+  r: 6;
+}
+
+.radar-point-warn {
+  fill: var(--coral-deep);
+}
+
+[data-theme="dark"] .radar-point-warn {
+  fill: var(--coral);
+}
+
+.radar-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  fill: var(--ink);
+  letter-spacing: 0.04em;
+}
+
+.radar-label-warn {
+  fill: var(--coral-deep);
+}
+
+[data-theme="dark"] .radar-label-warn {
+  fill: var(--coral);
+}
+
+.radar-label-sub {
+  font-weight: 400;
+  font-size: 0.62rem;
+  fill: var(--ink-soft);
+}
+
+/* Detalhes dos 6 eixos */
+.radar-details {
+  margin-top: 0.8rem;
+}
+
+.radar-grid-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.45rem;
+}
+
+.radar-chip {
+  background: var(--paper);
+  border: 1px solid var(--panel-border);
+  border-radius: 2px;
+  padding: 0.35rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.radar-chip-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.radar-chip-name {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.radar-chip-val {
+  color: var(--teal);
+}
+
+.radar-chip-range {
+  font-size: 0.62rem;
+  color: var(--ink-soft);
+}
+
+.radar-chip.is-warn {
+  border-color: rgba(217, 79, 61, 0.4);
+}
+
+.radar-chip.is-warn .radar-chip-val {
+  color: var(--coral-deep);
+}
+
+[data-theme="dark"] .radar-chip.is-warn .radar-chip-val {
+  color: var(--coral);
+}
+
 /* ---------- footer ---------- */
 
 .site-footer {

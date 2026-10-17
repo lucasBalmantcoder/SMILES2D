@@ -24,6 +24,8 @@ import {
   setViewerSpin,
   resetViewerCamera,
 } from "./viewer3d.js";
+import { evaluateBioavailability, renderRadarSvg } from "./radar.js";
+
 
 var RDKIT_CDN_BASE = "https://unpkg.com/@rdkit/rdkit@2026.9.1/dist/";
 var DEFAULT_SMILES = "CN1C=NC2=C1C(=O)N(C(=O)N2C)C"; // cafeína
@@ -353,6 +355,22 @@ function draw(smiles, options) {
   var hba = pick(d, ["NumHBA", "lipinskiHBA", "NumHAcceptors"]);
   var tpsa = pick(d, ["tpsa", "TPSA"]);
   var rot = pick(d, ["NumRotatableBonds", "NumRotBonds"]);
+  var fsp3 = pick(d, ["FractionCSP3", "fractionCSP3"]);
+  var heavyAtoms = pick(d, ["NumHeavyAtoms", "numHeavyAtoms"]);
+  var aromaticRings = pick(d, ["NumAromaticRings", "numAromaticRings"]);
+  var aromaticRatio =
+    heavyAtoms && heavyAtoms > 0 && aromaticRings !== null
+      ? Math.min(1.0, (aromaticRings * 6) / heavyAtoms)
+      : 0;
+
+  var bioEval = evaluateBioavailability({
+    mw: mw,
+    logp: logp,
+    tpsa: tpsa,
+    rotb: rot,
+    fsp3: fsp3,
+    aromaticRatio: aromaticRatio,
+  });
 
   els.mw.textContent = mw !== null ? roundOrDash(mw, 2) + " g/mol" : "—";
   els.logp.textContent = logp !== null ? roundOrDash(logp, 2) : "—";
@@ -361,6 +379,12 @@ function draw(smiles, options) {
   els.hba.textContent = hba !== null ? roundOrDash(hba, 0) : "—";
   els.tpsa.textContent = tpsa !== null ? roundOrDash(tpsa, 1) + " Å²" : "—";
   els.rot.textContent = rot !== null ? roundOrDash(rot, 0) : "—";
+  if (els.esol) {
+    els.esol.textContent = bioEval && bioEval.logS !== null ? roundOrDash(bioEval.logS, 2) : "—";
+  }
+  if (els.fsp3) {
+    els.fsp3.textContent = fsp3 !== null ? roundOrDash(fsp3, 2) : "—";
+  }
 
   var lipinski = calculateLipinski({ mw: mw, logp: logp, hbd: hbd, hba: hba });
   if (!lipinski) {
@@ -379,6 +403,37 @@ function draw(smiles, options) {
     els.lipinski.textContent = "Não atende (" + lipinski.violationsCount + " violações)";
     els.lipinski.className = "lipinski-fail";
     els.lipinski.title = "Violações: " + lipinski.violations.join(", ");
+  }
+
+  if (bioEval && els.radarChartWrap) {
+    els.radarChartWrap.innerHTML = renderRadarSvg(bioEval, { width: 320, height: 260 });
+    if (els.radarBadge) {
+      if (bioEval.isFullyOptimal) {
+        els.radarBadge.textContent = "Ótimo (6/6)";
+        els.radarBadge.className = "radar-badge pass";
+        els.radarBadge.title = "Todos os 6 parâmetros de biodisponibilidade oral dentro da faixa ideal";
+      } else {
+        els.radarBadge.textContent = bioEval.passedCount + "/6 ideais";
+        els.radarBadge.className = "radar-badge warn";
+        els.radarBadge.title = "Desvios: " + bioEval.deviations.join("; ");
+      }
+    }
+
+    if (els.radarChips && els.radarDetails) {
+      els.radarChips.innerHTML = "";
+      bioEval.axes.forEach(function (ax) {
+        var chip = document.createElement("div");
+        chip.className = "radar-chip" + (!ax.isOptimal ? " is-warn" : "");
+        chip.innerHTML =
+          '<div class="radar-chip-top">' +
+          '<span class="radar-chip-name">' + ax.axis.label + '</span>' +
+          '<span class="radar-chip-val">' + ax.axis.format(ax.value) + '</span>' +
+          '</div>' +
+          '<span class="radar-chip-range">ideal: ' + ax.axis.format(ax.axis.optMin) + ' a ' + ax.axis.format(ax.axis.optMax) + '</span>';
+        els.radarChips.appendChild(chip);
+      });
+      els.radarDetails.hidden = false;
+    }
   }
 
   setStatus("Estrutura desenhada.", "ok");
