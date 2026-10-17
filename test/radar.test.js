@@ -100,3 +100,4 @@ test("renderRadarSvg: gera fallback gracioso quando dados são nulos ou vazios",
   var svg = renderRadarSvg(null);
   assert.ok(svg.includes("Sem dados suficientes"));
 });
+
