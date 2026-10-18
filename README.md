@@ -19,6 +19,10 @@ Todo o processamento estrutural 2D e cálculos de descritores acontecem no naveg
   - **Numeração de Átomos (*Atom Indices*)**: Botão de alternância rápida (`Nº`) para exibir a numeração canônica de cada átomo no esqueleto 2D (ideal para identificação de centros quirais e atribuição espectroscópica). Os índices são preservados na exportação SVG/PNG.
   - **Modo Tela Cheia**: Expansão com um clique (`⛶`) para projeções em aulas, palestras e conferências.
 - **Cálculo de Propriedades Físico-Químicas**: Massa molar, fórmula molecular (notação de Hill), número de anéis, área de superfície polar (TPSA), doadores e aceptores de hidrogênio (HBD/HBA) e ligações rotacionáveis.
+- **Destaque de Grupos Funcionais & Subestruturas (SMARTS)**:
+  - **Paleta de Acesso Rápido**: Destaque instantâneo de funções orgânicas essenciais com um clique: Álcool, Carboxila, Amina, Amida, Éster, Carbonila, Anel Aromático, Halogênios, Éter e Nitro.
+  - **Busca por SMARTS Customizado**: Digite qualquer padrão SMARTS para pesquisar motivos estruturais específicos (ex.: `[OX2H]`, `c1ccccc1`, `[NX3]`).
+  - **Identificação Precisa**: Localização dos átomos e ligações via RDKit (`get_substruct_matches`) com contorno fluorescente colorido no SVG 2D e contagem de ocorrências.
 - **LogP (Crippen)**: Estimativa de coeficiente de partição octanol-água para avaliação de lipofilicidade.
 - **Solubilidade Aquosa (ESOL Delaney)**: Estimativa de $\text{Log S}$ pelo modelo preditivo de Delaney (2004) a partir de descritores topológicos.
 - **Regra dos 5 de Lipinski (*Drug-likeness*)**: Avaliação automática dos 4 critérios de biodisponibilidade para fármacos orais (Massa $\le 500\text{ Da}$, $\text{LogP} \le 5$, $\text{HBD} \le 5$, $\text{HBA} \le 10$) com badges informativos de conformidade e tooltips detalhando eventuais violações.
@@ -68,6 +72,7 @@ js/app.js             Ponto de entrada: estado global, eventos e coordenação d
 js/dom.js             Mapeamento centralizado de referências do DOM e atualizações de tela
 js/molecule.js        Interação com o RDKit.js (parsing, fórmula, Molfile e descritores)
 js/radar.js           Cálculo de ESOL e geração vetorial do Radar de Biodisponibilidade
+js/substructure.js    Busca e destaque de grupos funcionais e subestruturas (SMARTS)
 js/viewer3d.js        Resolução de SDF no PubChem e manipulação do 3Dmol.js
 js/pubchem.js         Consulta de compostos e metadados na API PUG REST do PubChem
 js/export.js          Exportação de arquivos (SVG, PNG, MOL), links e clipboard

@@ -145,6 +145,28 @@
       <button id="mol-btn" class="btn-ghost" type="button">Baixar MOL</button>
     </div>
 
+    <div class="substruct-block" id="substruct-block">
+      <div class="substruct-header">
+        <span class="field-label">destaque de grupos funcionais (SMARTS)</span>
+        <button id="substruct-clear-btn" class="btn-tool" type="button" hidden>limpar destaque</button>
+      </div>
+      <div class="chip-row substruct-chips" id="substruct-chips"></div>
+      <div class="input-row substruct-input-row">
+        <input
+          id="smarts-input"
+          type="text"
+          class="smiles-input smarts-input"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="padrão SMARTS ex.: [OX2H], c1ccccc1, [NX3]"
+          aria-label="Padrão SMARTS para busca de subestrutura"
+          disabled
+        />
+        <button id="smarts-btn" class="btn-secondary" type="button" disabled>Destacar</button>
+      </div>
+      <p id="substruct-status" class="status-line substruct-status" role="status" aria-live="polite"></p>
+    </div>
+
     <div class="viewer3d-block">
       <div class="viewer3d-header">
         <span class="field-label">estrutura 3D (via PubChem)</span>

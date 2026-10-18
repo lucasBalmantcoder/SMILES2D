@@ -70,11 +70,17 @@ export function renderMolecule(RDKitModule, smiles, options) {
     }
 
     var svg = "";
-    if (options.addAtomIndices && typeof mol.get_svg_with_highlights === "function") {
+    var hasHighlightAtoms = Array.isArray(options.highlightAtoms) && options.highlightAtoms.length > 0;
+    var hasHighlightBonds = Array.isArray(options.highlightBonds) && options.highlightBonds.length > 0;
+    var needsSpecialSvg = options.addAtomIndices || hasHighlightAtoms || hasHighlightBonds;
+
+    if (needsSpecialSvg && typeof mol.get_svg_with_highlights === "function") {
       try {
-        svg = mol.get_svg_with_highlights(
-          JSON.stringify({ width: 320, height: 260, addAtomIndices: true })
-        );
+        var details = { width: 320, height: 260 };
+        if (options.addAtomIndices) details.addAtomIndices = true;
+        if (hasHighlightAtoms) details.atoms = options.highlightAtoms;
+        if (hasHighlightBonds) details.bonds = options.highlightBonds;
+        svg = mol.get_svg_with_highlights(JSON.stringify(details));
       } catch (e) {
         svg = mol.get_svg(320, 260);
       }

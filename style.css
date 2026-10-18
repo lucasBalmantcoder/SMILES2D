@@ -558,6 +558,80 @@ body {
 .btn-ghost:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
 .btn-ghost:disabled { opacity: 0.5; cursor: default; }
 
+/* ---------- substructure / smarts highlight ---------- */
+
+.substruct-block {
+  margin-top: 1.1rem;
+  border-top: 1px solid var(--paper-line);
+  padding-top: 1rem;
+}
+
+.substruct-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.6rem;
+}
+
+.substruct-header .field-label {
+  margin-bottom: 0;
+}
+
+.substruct-chips {
+  margin-bottom: 0.75rem;
+  gap: 0.4rem;
+}
+
+.substruct-chips .chip {
+  font-size: 0.78rem;
+  padding: 0.25rem 0.6rem;
+}
+
+.substruct-chips .chip.active {
+  background: var(--teal);
+  color: #F4F8F6;
+  border-color: var(--teal);
+}
+
+.substruct-input-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.smarts-input {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.7rem;
+}
+
+.substruct-status {
+  margin-top: 0.5rem;
+  font-size: 0.76rem;
+  min-height: 1.2em;
+}
+
+.substruct-status[data-state="ok"] {
+  color: var(--teal);
+}
+
+.substruct-status[data-state="warn"] {
+  color: #B57519;
+}
+
+[data-theme="dark"] .substruct-status[data-state="warn"] {
+  color: #E2A03F;
+}
+
+.substruct-status[data-state="error"] {
+  color: var(--coral-deep);
+}
+
+[data-theme="dark"] .substruct-status[data-state="error"] {
+  color: var(--coral);
+}
+
 .viewer3d-block {
   margin-top: 1.1rem;
   border-top: 1px solid var(--paper-line);

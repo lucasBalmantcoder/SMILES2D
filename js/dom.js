@@ -46,6 +46,12 @@ export var els = {
   canvasFsBtn: document.getElementById("canvas-fs-btn"),
   canvasViewport: document.getElementById("canvas-viewport"),
   canvasToolbar: document.getElementById("canvas-toolbar"),
+  substructBlock: document.getElementById("substruct-block"),
+  substructChips: document.getElementById("substruct-chips"),
+  substructClearBtn: document.getElementById("substruct-clear-btn"),
+  smartsInput: document.getElementById("smarts-input"),
+  smartsBtn: document.getElementById("smarts-btn"),
+  substructStatus: document.getElementById("substruct-status"),
   installBtn: document.getElementById("install-btn"),
 };
 
@@ -95,6 +101,16 @@ export function resetProps() {
   }
   if (els.radarDetails) els.radarDetails.hidden = true;
   if (els.radarChips) els.radarChips.innerHTML = "";
+  if (els.substructStatus) {
+    els.substructStatus.textContent = "";
+    els.substructStatus.removeAttribute("data-state");
+  }
+  if (els.substructClearBtn) els.substructClearBtn.hidden = true;
+  if (els.substructChips) {
+    els.substructChips.querySelectorAll(".chip").forEach(function (c) {
+      c.classList.remove("active");
+    });
+  }
 }
 
 export function setPubchemFields(iupacName, inchikey) {
@@ -117,6 +133,13 @@ export function setExportButtonsEnabled(enabled) {
   els.pngBtn.disabled = !enabled;
   els.molBtn.disabled = !enabled;
   els.view3dBtn.disabled = !enabled;
+  if (els.smartsInput) els.smartsInput.disabled = !enabled;
+  if (els.smartsBtn) els.smartsBtn.disabled = !enabled;
+  if (els.substructChips) {
+    els.substructChips.querySelectorAll("button").forEach(function (b) {
+      b.disabled = !enabled;
+    });
+  }
   setCanvasToolsEnabled(enabled);
 }
 

@@ -25,6 +25,8 @@ import {
   resetViewerCamera,
 } from "./viewer3d.js";
 import { evaluateBioavailability, renderRadarSvg } from "./radar.js";
+import { findSubstructure, FUNCTIONAL_GROUPS } from "./substructure.js";
+
 
 
 var RDKIT_CDN_BASE = "https://unpkg.com/@rdkit/rdkit@2026.9.1/dist/";
@@ -52,6 +54,129 @@ var canvas2dState = {
   showAtomIndices: false,
   isFullscreen: false,
 };
+
+var substructState = {
+  activeSmarts: "",
+  activeLabel: "",
+  highlightAtoms: [],
+  highlightBonds: [],
+};
+
+function setSubstructStatus(message, state) {
+  if (!els.substructStatus) return;
+  els.substructStatus.textContent = message || "";
+  if (state) {
+    els.substructStatus.setAttribute("data-state", state);
+  } else {
+    els.substructStatus.removeAttribute("data-state");
+  }
+}
+
+function updateSubstructChipsActive(activeSmarts) {
+  if (!els.substructChips) return;
+  var buttons = els.substructChips.querySelectorAll("button");
+  buttons.forEach(function (btn, idx) {
+    if (FUNCTIONAL_GROUPS[idx] && FUNCTIONAL_GROUPS[idx].smarts === activeSmarts) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+}
+
+function renderFunctionalGroupsChips() {
+  if (!els.substructChips) return;
+  els.substructChips.innerHTML = "";
+  FUNCTIONAL_GROUPS.forEach(function (grp) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip";
+    btn.textContent = grp.name;
+    btn.title = grp.desc + " — " + grp.smarts;
+    btn.disabled = !current;
+    btn.addEventListener("click", function () {
+      if (substructState.activeSmarts === grp.smarts) {
+        clearSubstructureHighlight();
+      } else {
+        if (els.smartsInput) els.smartsInput.value = grp.smarts;
+        applySubstructureHighlight(grp.smarts, grp.name);
+      }
+    });
+    els.substructChips.appendChild(btn);
+  });
+}
+
+function applySubstructureHighlight(smarts, label) {
+  if (!current || !RDKitModule) return;
+  var trimmed = (smarts || "").trim();
+  if (!trimmed) {
+    setSubstructStatus("Digite um padrão SMARTS para destacar.", "warn");
+    return;
+  }
+
+  var res = findSubstructure(RDKitModule, current.smiles, trimmed);
+  if (!res.ok) {
+    if (res.reason === "invalid_smarts") {
+      setSubstructStatus("SMARTS inválido — verifique a sintaxe da consulta.", "error");
+    } else {
+      setSubstructStatus("Não foi possível processar o padrão SMARTS.", "error");
+    }
+    clearSubstructureHighlight({ keepStatus: true });
+    return;
+  }
+
+  if (res.matchCount === 0) {
+    var notFoundLabel = label ? label + " (" + trimmed + ")" : trimmed;
+    setSubstructStatus("Nenhuma correspondência para " + notFoundLabel + ".", "warn");
+    clearSubstructureHighlight({ keepStatus: true });
+    return;
+  }
+
+  substructState.activeSmarts = trimmed;
+  substructState.activeLabel = label || trimmed;
+  substructState.highlightAtoms = res.atoms;
+  substructState.highlightBonds = res.bonds;
+
+  if (els.substructClearBtn) els.substructClearBtn.hidden = false;
+  updateSubstructChipsActive(trimmed);
+
+  var occText = res.matchCount === 1 ? "1 ocorrência encontrada" : res.matchCount + " ocorrências encontradas";
+  var atomText = res.atoms.length === 1 ? "1 átomo destacado" : res.atoms.length + " átomos destacados";
+  var nameText = label ? label + " (" + trimmed + ")" : trimmed;
+  setSubstructStatus(nameText + ": " + occText + " (" + atomText + ").", "ok");
+
+  draw(current.smiles, {
+    addHistory: false,
+    preserveTransform: true,
+    highlightAtoms: res.atoms,
+    highlightBonds: res.bonds,
+  });
+}
+
+function clearSubstructureHighlight(opts) {
+  opts = opts || {};
+  substructState.activeSmarts = "";
+  substructState.activeLabel = "";
+  substructState.highlightAtoms = [];
+  substructState.highlightBonds = [];
+
+  if (els.substructClearBtn) els.substructClearBtn.hidden = true;
+  if (!opts.keepStatus) {
+    setSubstructStatus("");
+    if (els.smartsInput) els.smartsInput.value = "";
+  }
+  updateSubstructChipsActive("");
+
+  if (current && current.smiles) {
+    draw(current.smiles, {
+      addHistory: false,
+      preserveTransform: true,
+      highlightAtoms: [],
+      highlightBonds: [],
+    });
+  }
+}
+
 
 function applyCanvasTransform() {
   if (!els.canvasViewport) return;
@@ -315,8 +440,30 @@ function draw(smiles, options) {
     return;
   }
 
+  var trimmed = (smiles || "").trim();
+  if (current && current.smiles !== trimmed && options.highlightAtoms === undefined) {
+    substructState.activeSmarts = "";
+    substructState.activeLabel = "";
+    substructState.highlightAtoms = [];
+    substructState.highlightBonds = [];
+    if (els.substructClearBtn) els.substructClearBtn.hidden = true;
+    if (els.substructStatus) {
+      els.substructStatus.textContent = "";
+      els.substructStatus.removeAttribute("data-state");
+    }
+    updateSubstructChipsActive("");
+    if (els.smartsInput) els.smartsInput.value = "";
+  }
+
+  var highlightAtoms =
+    options.highlightAtoms !== undefined ? options.highlightAtoms : substructState.highlightAtoms;
+  var highlightBonds =
+    options.highlightBonds !== undefined ? options.highlightBonds : substructState.highlightBonds;
+
   var result = renderMolecule(RDKitModule, smiles, {
     addAtomIndices: canvas2dState.showAtomIndices,
+    highlightAtoms: highlightAtoms,
+    highlightBonds: highlightBonds,
   });
   resetViewer3d();
 
@@ -706,6 +853,28 @@ function init() {
   }
   if (els.viewer3dResetBtn) {
     els.viewer3dResetBtn.addEventListener("click", handle3dResetClick);
+  }
+
+  renderFunctionalGroupsChips();
+
+  if (els.smartsBtn) {
+    els.smartsBtn.addEventListener("click", function () {
+      applySubstructureHighlight(els.smartsInput.value, "padrão SMARTS");
+    });
+  }
+
+  if (els.smartsInput) {
+    els.smartsInput.addEventListener("keydown", function (evt) {
+      if (evt.key === "Enter") {
+        applySubstructureHighlight(els.smartsInput.value, "padrão SMARTS");
+      }
+    });
+  }
+
+  if (els.substructClearBtn) {
+    els.substructClearBtn.addEventListener("click", function () {
+      clearSubstructureHighlight();
+    });
   }
 
   if (typeof window.initRDKitModule !== "function") {
