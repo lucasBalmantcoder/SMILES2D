@@ -99,3 +99,4 @@ test("renderMolecule: renderiza com highlightAtoms e highlightBonds", () => {
   assert.ok(result.svg.includes('"atoms":[0,1]'));
   assert.ok(result.svg.includes('"bonds":[0]'));
 });
+

@@ -90,3 +90,4 @@ export function findSubstructure(RDKitModule, smiles, smarts) {
     }
   }
 }
+
