@@ -44,7 +44,6 @@ var viewer3dState = {
 
 var canvas2dState = {
   showAtomIndices: false,
-  isFullscreen: false,
 };
 
 var substructState = {
@@ -185,65 +184,10 @@ function handleToggleAtomIndices() {
   }
 }
 
-function updateFullscreenUi(isFullscreen) {
-  canvas2dState.isFullscreen = isFullscreen;
-  if (!els.canvasFsBtn || !els.canvasWrap) return;
-  els.canvasFsBtn.setAttribute("aria-pressed", isFullscreen ? "true" : "false");
-  if (isFullscreen) {
-    els.canvasWrap.classList.add("is-fullscreen");
-    els.canvasFsBtn.classList.add("active");
-    els.canvasFsBtn.textContent = "✕";
-    els.canvasFsBtn.title = "Sair da tela cheia (Esc)";
-    els.canvasFsBtn.setAttribute("aria-label", "Sair da tela cheia");
-  } else {
-    els.canvasWrap.classList.remove("is-fullscreen");
-    els.canvasFsBtn.classList.remove("active");
-    els.canvasFsBtn.textContent = "⛶";
-    els.canvasFsBtn.title = "Alternar tela cheia";
-    els.canvasFsBtn.setAttribute("aria-label", "Alternar tela cheia");
-  }
-}
-
-function handleToggleFullscreen() {
-  if (!els.canvasWrap) return;
-  var isFs = document.fullscreenElement === els.canvasWrap || canvas2dState.isFullscreen;
-  if (isFs) {
-    if (document.fullscreenElement) {
-      document.exitFullscreen().catch(function () {});
-    }
-    updateFullscreenUi(false);
-  } else {
-    if (typeof els.canvasWrap.requestFullscreen === "function") {
-      els.canvasWrap.requestFullscreen().then(function () {
-        updateFullscreenUi(true);
-      }).catch(function () {
-        updateFullscreenUi(true);
-      });
-    } else {
-      updateFullscreenUi(true);
-    }
-  }
-}
-
 function setupCanvasInteractivity() {
-  if (!els.canvasWrap) return;
-
-  document.addEventListener("fullscreenchange", function () {
-    var isFs = document.fullscreenElement === els.canvasWrap;
-    updateFullscreenUi(isFs);
-  });
-
-  window.addEventListener("keydown", function (e) {
-    if (e.key === "Escape" && canvas2dState.isFullscreen) {
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(function () {});
-      }
-      updateFullscreenUi(false);
-    }
-  });
-
-  if (els.atomIndicesBtn) els.atomIndicesBtn.addEventListener("click", handleToggleAtomIndices);
-  if (els.canvasFsBtn) els.canvasFsBtn.addEventListener("click", handleToggleFullscreen);
+  if (els.atomIndicesBtn) {
+    els.atomIndicesBtn.addEventListener("click", handleToggleAtomIndices);
+  }
 }
 
 

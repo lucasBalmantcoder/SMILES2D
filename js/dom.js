@@ -40,9 +40,7 @@ export var els = {
   viewer3dSpinBtn: document.getElementById("viewer3d-spin-btn"),
   viewer3dResetBtn: document.getElementById("viewer3d-reset-btn"),
   atomIndicesBtn: document.getElementById("atom-indices-btn"),
-  canvasFsBtn: document.getElementById("canvas-fs-btn"),
   canvasViewport: document.getElementById("canvas-viewport"),
-  canvasToolbar: document.getElementById("canvas-toolbar"),
   substructBlock: document.getElementById("substruct-block"),
   substructChips: document.getElementById("substruct-chips"),
   substructClearBtn: document.getElementById("substruct-clear-btn"),
@@ -117,7 +115,6 @@ export function setPubchemFields(iupacName, inchikey) {
 
 export function setCanvasToolsEnabled(enabled) {
   if (els.atomIndicesBtn) els.atomIndicesBtn.disabled = !enabled;
-  if (els.canvasFsBtn) els.canvasFsBtn.disabled = !enabled;
 }
 
 export function setExportButtonsEnabled(enabled) {
