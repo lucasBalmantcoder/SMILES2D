@@ -39,9 +39,6 @@ export var els = {
   viewer3dToolbar: document.getElementById("viewer3d-toolbar"),
   viewer3dSpinBtn: document.getElementById("viewer3d-spin-btn"),
   viewer3dResetBtn: document.getElementById("viewer3d-reset-btn"),
-  zoomInBtn: document.getElementById("zoom-in-btn"),
-  zoomOutBtn: document.getElementById("zoom-out-btn"),
-  zoomResetBtn: document.getElementById("zoom-reset-btn"),
   atomIndicesBtn: document.getElementById("atom-indices-btn"),
   canvasFsBtn: document.getElementById("canvas-fs-btn"),
   canvasViewport: document.getElementById("canvas-viewport"),
@@ -119,9 +116,6 @@ export function setPubchemFields(iupacName, inchikey) {
 }
 
 export function setCanvasToolsEnabled(enabled) {
-  if (els.zoomInBtn) els.zoomInBtn.disabled = !enabled;
-  if (els.zoomOutBtn) els.zoomOutBtn.disabled = !enabled;
-  if (els.zoomResetBtn) els.zoomResetBtn.disabled = !enabled;
   if (els.atomIndicesBtn) els.atomIndicesBtn.disabled = !enabled;
   if (els.canvasFsBtn) els.canvasFsBtn.disabled = !enabled;
 }

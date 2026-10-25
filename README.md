@@ -14,8 +14,7 @@ Todo o processamento estrutural 2D e cálculos de descritores acontecem no naveg
 
 ### 🧪 Química & Farmacologia
 - **Desenho 2D de Alta Qualidade**: Renderização vetorial precisa de estruturas moleculares a partir de qualquer SMILES válido.
-- **Interatividade 2D Completa**:
-  - **Zoom e Pan Fluido**: Aumente (+) ou diminua (−) o zoom, utilize a roda do mouse (*scroll wheel*) ou dê duplo clique para redefinir. Arraste (*drag & drop*) a molécula pelo canvas livremente.
+- **Visualizador 2D com Recursos Avançados**:
   - **Numeração de Átomos (*Atom Indices*)**: Botão de alternância rápida (`Nº`) para exibir a numeração canônica de cada átomo no esqueleto 2D (ideal para identificação de centros quirais e atribuição espectroscópica). Os índices são preservados na exportação SVG/PNG.
   - **Modo Tela Cheia**: Expansão com um clique (`⛶`) para projeções em aulas, palestras e conferências.
 - **Cálculo de Propriedades Físico-Químicas**: Massa molar, fórmula molecular (notação de Hill), número de anéis, área de superfície polar (TPSA), doadores e aceptores de hidrogênio (HBD/HBA) e ligações rotacionáveis.
