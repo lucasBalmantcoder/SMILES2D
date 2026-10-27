@@ -236,7 +236,9 @@ function resetViewer3d() {
     els.viewer3dToolbar.hidden = true;
   }
   els.viewer3dStatus.textContent = "";
-  els.view3dBtn.textContent = "3D";
+  els.view3dBtn.hidden = true;
+  els.view3dBtn.disabled = true;
+  els.view3dBtn.textContent = "Tentar novamente";
   updateSpinButton(false);
   setActiveStyleButton("stick");
 }
@@ -504,10 +506,10 @@ function handleDownloadMol() {
 
 // Busca e renderiza a estrutura 3D no PubChem. Chamada automaticamente a
 // cada molécula desenhada, e também pelo botão (para tentar de novo em
-// caso de falha, já que quando já carregada o botão só alterna visibilidade).
+// caso de falha).
 function load3d(smiles) {
+  els.view3dBtn.hidden = true;
   els.view3dBtn.disabled = true;
-  els.view3dBtn.textContent = "Carregando 3D…";
   els.viewer3dStatus.textContent = "Buscando estrutura 3D no PubChem…";
   els.viewer3dStatus.removeAttribute("data-state");
 
@@ -534,38 +536,21 @@ function load3d(smiles) {
 
       els.viewer3dStatus.textContent = "Estrutura 3D carregada (dados do PubChem).";
       els.viewer3dStatus.setAttribute("data-state", "ok");
-      els.view3dBtn.textContent = "Ocultar 3D";
-      els.view3dBtn.disabled = false;
+      els.view3dBtn.hidden = true;
+      els.view3dBtn.disabled = true;
     })
     .catch(function (err) {
       if (!current || current.smiles !== smiles) return;
       els.viewer3dStatus.textContent = "Estrutura 3D indisponível (" + err.message + ").";
       els.viewer3dStatus.removeAttribute("data-state");
       els.view3dBtn.textContent = "Tentar novamente";
+      els.view3dBtn.hidden = false;
       els.view3dBtn.disabled = false;
     });
 }
 
 function handleView3d() {
   if (!current) return;
-
-  // Já carregado para esta molécula: só alterna mostrar/ocultar.
-  if (viewer3dState.sdf && viewer3dState.smiles === current.smiles) {
-    var nowHidden = !els.viewer3dContainer.hidden;
-    els.viewer3dContainer.hidden = nowHidden;
-    if (els.viewer3dToolbar) {
-      els.viewer3dToolbar.hidden = nowHidden;
-    }
-    els.view3dBtn.textContent = nowHidden ? "Mostrar 3D" : "Ocultar 3D";
-    if (nowHidden && viewer3dState.isSpinning) {
-      setViewerSpin(viewer3dState.viewer, false);
-      viewer3dState.isSpinning = false;
-      updateSpinButton(false);
-    }
-    return;
-  }
-
-  // Ainda não carregado (ou a tentativa anterior falhou) — busca de novo.
   load3d(current.smiles);
 }
 

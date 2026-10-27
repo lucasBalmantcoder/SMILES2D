@@ -93,9 +93,23 @@ export function setViewerSpin(viewer, spin) {
 }
 
 export function resetViewerCamera(viewer) {
-  if (!viewer || typeof viewer.zoomTo !== "function") return;
-  viewer.zoomTo();
-  viewer.render();
+  if (!viewer) return;
+  try {
+    if (typeof viewer.center === "function") {
+      viewer.center();
+    }
+    if (typeof viewer.zoomTo === "function") {
+      viewer.zoomTo(null, 200);
+    }
+    if (typeof viewer.render === "function") {
+      viewer.render();
+    }
+  } catch (e) {
+    try {
+      if (typeof viewer.zoomTo === "function") viewer.zoomTo();
+      if (typeof viewer.render === "function") viewer.render();
+    } catch (err) {}
+  }
 }
 
 // Renderiza o SDF num container já visível na página. Requer que a

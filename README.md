@@ -39,7 +39,7 @@ Todo o processamento estrutural 2D e cálculos de descritores acontecem no naveg
   - **Esferas (*sphere/CPK*)**: Preenchimento espacial por raio de Van der Waals.
   - **Linhas (*wireframe*)**: Esqueleto minimalista de ligações.
   - **Superfície (*surface*)**: Superfície de Van der Waals translúcida sobreposta à estrutura.
-- **Controles de Câmera e Animação**: Rotação automática contínua (*spin*) com alternância rápida e botão de centralização de câmera (*reset zoom*).
+- **Controles de Câmera e Animação**: Rotação automática contínua (*spin*) e botão para redefinir enquadramento e enquadrar a molécula (*resetar zoom*).
 - **Tema Sincronizado**: O fundo do visualizador 3D adapta-se dinamicamente entre os modos claro e escuro.
 
 ### 📱 PWA (Progressive Web App) & Modo 100% Offline
@@ -106,7 +106,7 @@ Em seguida, acesse no navegador: `http://localhost:8000`
 O projeto utiliza o **test runner nativo do Node.js** (`node --test`), garantindo execução rápida sem dependências externas pesadas:
 
 ```bash
-npm test        # Executa os 21 testes unitários (node --test)
+npm test        # Executa os 35 testes unitários (node --test)
 npm run lint    # Executa a verificação de código via ESLint
 ```
 
